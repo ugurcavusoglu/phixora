@@ -1,0 +1,9 @@
+node_modules
+.env
+/generated/prisma
+
+# AI model weights — too large for GitHub (download separately)
+ai/**/*.pth
+gfpgan/weights/*.pth
+uploads/
+outputs/
