@@ -83,10 +83,14 @@ export default function SignupPage() {
             Continue with Google
           </button>
 
-          <p className="text-center text-sm text-[#71717A] mt-4">
-            <Link to="/demo" className="hover:text-[#A855F7] transition-colors">Try a Demo (no account)</Link>
-          </p>
-          <p className="text-center text-sm text-[#71717A] mt-2">
+          <Link
+            to="/demo"
+            className="w-full mt-3 py-2.5 rounded-lg border border-[#06D6A0]/40 text-[#06D6A0] hover:bg-[#06D6A0]/10 transition-all flex items-center justify-center gap-2 text-sm font-medium"
+          >
+            ✦ Try a Demo — no account needed
+          </Link>
+
+          <p className="text-center text-sm text-[#71717A] mt-6">
             Already have an account?{' '}
             <Link to="/login" className="text-[#A855F7] hover:underline">Log In</Link>
           </p>

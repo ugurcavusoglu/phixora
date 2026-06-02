@@ -98,9 +98,9 @@ export default function LoginPage() {
 
           <button
             onClick={() => navigate('/demo')}
-            className="w-full py-2.5 mt-2 rounded-lg border border-[#1E1E2E] text-[#71717A] hover:text-white hover:border-[#7C3AED]/50 transition-all text-sm"
+            className="w-full py-2.5 mt-3 rounded-lg border border-[#06D6A0]/40 text-[#06D6A0] hover:bg-[#06D6A0]/10 transition-all flex items-center justify-center gap-2 text-sm font-medium"
           >
-            Try a Demo (no account)
+            ✦ Try a Demo — no account needed
           </button>
 
           <p className="text-center text-sm text-[#71717A] mt-6">

@@ -1,9 +1,36 @@
 import { Link } from 'react-router-dom';
+import BeforeAfterSlider from '../components/BeforeAfterSlider';
+
+// Placeholder before/after pairs. Replace `before`/`after` with real image
+// paths (e.g. "/demo/super-res-before.jpg") once assets are ready.
+const ph = (label: string, bg: string, fg = '#F4F4F5') =>
+  `data:image/svg+xml;utf8,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300">
+      <rect width="480" height="300" fill="${bg}"/>
+      <text x="50%" y="50%" fill="${fg}" font-family="sans-serif" font-size="20"
+        text-anchor="middle" dominant-baseline="middle">${label}</text>
+    </svg>`,
+  )}`;
 
 const tools = [
-  { label: 'Super Resolution', desc: 'Upscale images up to 4x without losing detail.' },
-  { label: 'Noise Removal', desc: 'Clean up grain and artifacts from any photo.' },
-  { label: 'Background Removal', desc: 'Remove backgrounds instantly with AI precision.' },
+  {
+    label: 'Super Resolution',
+    desc: 'Upscale images up to 4x without losing detail.',
+    before: ph('Low-res', '#1E1E2E', '#71717A'),
+    after: ph('4x Upscaled', '#2A1E3E'),
+  },
+  {
+    label: 'Noise Removal',
+    desc: 'Clean up grain and artifacts from any photo.',
+    before: ph('Noisy', '#1E1E2E', '#71717A'),
+    after: ph('Denoised', '#1E2A3E'),
+  },
+  {
+    label: 'Background Removal',
+    desc: 'Remove backgrounds instantly with AI precision.',
+    before: ph('With Background', '#1E1E2E', '#71717A'),
+    after: ph('No Background', '#0A2A24'),
+  },
 ];
 
 const steps = [
@@ -69,11 +96,12 @@ export default function WelcomePage() {
           <div className="grid md:grid-cols-3 gap-6">
             {tools.map((t) => (
               <div key={t.label} className="p-6 rounded-2xl border border-[#1E1E2E] bg-[#12121A] hover:border-[#06D6A0]/40 transition-all">
-                <div className="aspect-video rounded-xl bg-[#0A0A0F] border border-[#1E1E2E] mb-4 flex items-center justify-center gap-3">
-                  <div className="w-16 h-16 bg-[#1E1E2E] rounded-lg" />
-                  <span className="text-[#71717A] text-lg">◇</span>
-                  <div className="w-16 h-16 bg-[#7C3AED]/20 rounded-lg border border-[#7C3AED]/30" />
-                </div>
+                <BeforeAfterSlider
+                  beforeUrl={t.before}
+                  afterUrl={t.after}
+                  aspectRatio="16/10"
+                  className="rounded-xl mb-4"
+                />
                 <h3 className="text-white font-semibold mb-1">{t.label}</h3>
                 <p className="text-[#71717A] text-sm">{t.desc}</p>
               </div>
