@@ -28,22 +28,31 @@ export default function ProcessPage() {
   useEffect(() => {
     if ((!file && !isDemo) || !tool) { navigate('/upload'); return; }
 
-    // Animate progress toward 99% over ~15s; snaps to 100% when done
+    // cancelled guards against a stale run (e.g. StrictMode's double mount in
+    // dev) flashing a false error after the live run already succeeded.
+    let cancelled = false;
+
+    // Staged progress: quickly to 40, slower to 70, slowest to 90, then hold.
+    // It never reaches 100 on its own — finish() snaps to 100 when the real
+    // result arrives, so the bar reflects "still working" until it's truly done.
     const interval = setInterval(() => {
       setProgress((p) => {
-        if (p < 60) return p + 6;
-        if (p < 85) return p + 1.5;
-        if (p < 99) return p + 0.3;
-        return p;
+        if (p < 40) return p + 4;
+        if (p < 70) return p + 1.2;
+        if (p < 90) return p + 0.4;
+        return p; // hold at ~90 until the result comes back
       });
       setElapsed(Math.floor((Date.now() - startTime.current) / 1000));
     }, 400);
 
     const finish = (outputUrl: string, historyId: string) => {
+      if (cancelled) return;
       clearInterval(interval);
       setProgress(100);
       setResult(outputUrl, historyId);
-      setTimeout(() => navigate('/result'), 600);
+      // replace: Process is a transient screen — don't keep it in history,
+      // so "back" from the result goes to Tools, not back into processing.
+      setTimeout(() => navigate('/result', { replace: true }), 600);
     };
 
     if (isDemo) {
@@ -62,17 +71,18 @@ export default function ProcessPage() {
     processImage(file!, tool, { scale, intensity, faceEnhance })
       .then(({ data }) => finish(data.outputUrl, data.historyId))
       .catch(() => {
+        if (cancelled) return;
         clearInterval(interval);
         setError('Processing failed. Please try again.');
       });
 
-    return () => clearInterval(interval);
+    return () => { cancelled = true; clearInterval(interval); };
   }, []);
 
   const toolLabel = tool ? TOOL_LABELS[tool] : '';
   const hint = tool ? TOOL_HINTS[tool] : '';
   const circumference = 2 * Math.PI * 45;
-  const displayProgress = Math.min(Math.round(progress), 99);
+  const displayProgress = Math.round(progress);
 
   const formatElapsed = (s: number) => {
     if (s < 60) return `${s}s`;
@@ -105,7 +115,7 @@ export default function ProcessPage() {
                   cx="50" cy="50" r="45" fill="none"
                   stroke="url(#grad)" strokeWidth="7"
                   strokeDasharray={circumference}
-                  strokeDashoffset={circumference * (1 - Math.min(progress, 99) / 100)}
+                  strokeDashoffset={circumference * (1 - progress / 100)}
                   strokeLinecap="round"
                   style={{ transition: 'stroke-dashoffset 0.6s ease' }}
                 />

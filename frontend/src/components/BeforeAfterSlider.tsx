@@ -3,23 +3,30 @@ import { useRef, useState, useCallback } from 'react';
 interface BeforeAfterSliderProps {
   beforeUrl: string;
   afterUrl: string;
-  /** Tailwind aspect-ratio style value, e.g. '16/10'. */
+  /** Fallback aspect-ratio used until the image loads (or when fitToImage is false). */
   aspectRatio?: string;
+  /** When true, the frame matches the loaded image's real aspect ratio (no cropping). */
+  fitToImage?: boolean;
+  /** Show a checkerboard behind the image — only meaningful for transparent (background-removed) results. */
+  showCheckerboard?: boolean;
   className?: string;
 }
 
 /**
  * Draggable before/after comparison. The "after" image fills the frame and
  * the "before" image is clipped to the left of the handle. Used on the
- * Welcome results cards and the Result page.
+ * Welcome results cards (fixed ratio) and the Result page (fits the image).
  */
 export default function BeforeAfterSlider({
   beforeUrl,
   afterUrl,
   aspectRatio = '16/10',
+  fitToImage = false,
+  showCheckerboard = false,
   className = '',
 }: BeforeAfterSliderProps) {
   const [sliderX, setSliderX] = useState(50);
+  const [imageAspect, setImageAspect] = useState<string | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
 
@@ -37,11 +44,22 @@ export default function BeforeAfterSlider({
     if (dragging.current) moveTo(e.touches[0].clientX);
   };
 
+  const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!fitToImage) return;
+    const { naturalWidth, naturalHeight } = e.currentTarget;
+    if (naturalWidth && naturalHeight) {
+      setImageAspect(`${naturalWidth}/${naturalHeight}`);
+    }
+  };
+
+  // Fit mode contains the image (no crop); fixed mode covers/crops to the frame.
+  const fit = fitToImage ? 'object-contain' : 'object-cover';
+
   return (
     <div
       ref={containerRef}
       className={`relative overflow-hidden border border-[#1E1E2E] cursor-col-resize select-none ${className}`}
-      style={{ aspectRatio }}
+      style={{ aspectRatio: imageAspect ?? aspectRatio, maxHeight: fitToImage ? '70vh' : undefined }}
       onMouseMove={onMouseMove}
       onMouseDown={(e) => { dragging.current = true; moveTo(e.clientX); }}
       onMouseUp={() => { dragging.current = false; }}
@@ -50,14 +68,35 @@ export default function BeforeAfterSlider({
       onTouchMove={onTouchMove}
       onTouchEnd={() => { dragging.current = false; }}
     >
+      {/* Backdrop: checkerboard only for transparent (background-removed) results, plain dark otherwise */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={
+          showCheckerboard
+            ? {
+                backgroundColor: '#2A2A33',
+                backgroundImage:
+                  'linear-gradient(45deg, #3A3A44 25%, transparent 25%), linear-gradient(-45deg, #3A3A44 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #3A3A44 75%), linear-gradient(-45deg, transparent 75%, #3A3A44 75%)',
+                backgroundSize: '20px 20px',
+                backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0',
+              }
+            : { backgroundColor: '#0A0A0F' }
+        }
+      />
+
       {/* After (full background) */}
-      <img src={afterUrl} alt="after" className="absolute inset-0 w-full h-full object-cover pointer-events-none" />
+      <img
+        src={afterUrl}
+        alt="after"
+        onLoad={onImageLoad}
+        className={`absolute inset-0 w-full h-full ${fit} pointer-events-none`}
+      />
 
       {/* Before (clipped to left of handle) */}
       <img
         src={beforeUrl}
         alt="before"
-        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+        className={`absolute inset-0 w-full h-full ${fit} pointer-events-none`}
         style={{ clipPath: `inset(0 ${100 - sliderX}% 0 0)` }}
       />
 

@@ -13,7 +13,7 @@ export default function HistoryPage() {
   const [items, setItems] = useState<HistoryItem[]>([]);
   const [selected, setSelected] = useState<HistoryItem | null>(null);
   const [loading, setLoading] = useState(true);
-  const { setResult } = useImageStore();
+  const { loadHistoryItem } = useImageStore();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -80,7 +80,12 @@ export default function HistoryPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => {
-                  setResult(selected.outputUrl, selected.id);
+                  loadHistoryItem({
+                    tool: selected.tool as any,
+                    inputUrl: selected.inputUrl,
+                    outputUrl: selected.outputUrl,
+                    id: selected.id,
+                  });
                   navigate('/result');
                 }}
                 className="px-6 py-2.5 rounded-xl bg-[#7C3AED] hover:bg-[#A855F7] text-white text-sm font-semibold transition-all"

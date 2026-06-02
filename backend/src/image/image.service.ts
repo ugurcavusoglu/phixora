@@ -2,6 +2,8 @@ import {
   Injectable,
   BadRequestException,
   InternalServerErrorException,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { HistoryService } from '../history/history.service';
 import { join, extname } from 'path';
@@ -19,10 +21,15 @@ export interface ProcessOptions {
 
 // Replicate model versions (owner/model:version). Pinned for reproducibility.
 const MODELS = {
+  // SwinIR — sharper textures than Real-ESRGAN for real-world super-resolution.
   upscale:
-    'nightmareai/real-esrgan:f121d640bd286e1fdc67f9799164c1d5be36ff74576ee11c803ae5b665dd46aa',
+    'jingyunliang/swinir:660d922d33153019e8c263a3bba265de882e7f4f70396546b6c9c8f9d47a021a',
+  // NAFNet — a real denoiser (not an upscaler hack) for noise removal.
+  denoise:
+    'megvii-research/nafnet:018241a6c880319404eaa2714b764313e27e11f950a7ff0a7b5b37b27b74dcf7',
+  // 851-labs background-remover — cleaner edges than the old rembg.
   removeBg:
-    'cjwbw/rembg:fb8af171cfa1616ddcf1242c093f9c46bcada5ad4cf6f2fbe8b81b330ec5c003',
+    '851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc',
 } as const;
 
 @Injectable()
@@ -64,7 +71,7 @@ export class ImageService {
   private async runReplicate(
     tool: Tool,
     inputPath: string,
-    options: ProcessOptions,
+    _options: ProcessOptions,
   ): Promise<string> {
     const imageData = fs.readFileSync(inputPath);
 
@@ -73,22 +80,28 @@ export class ImageService {
 
     if (tool === 'remove-background') {
       model = MODELS.removeBg;
-      input = { image: imageData };
+      input = { image: imageData, format: 'png', background_type: 'rgba' };
+    } else if (tool === 'remove-noise') {
+      model = MODELS.denoise;
+      input = { image: imageData, task_type: 'Image Denoising' };
     } else {
-      // super-resolution and remove-noise both use Real-ESRGAN.
-      // remove-noise = upscale at scale 1 (denoise without enlarging).
+      // super-resolution
       model = MODELS.upscale;
-      input = {
-        image: imageData,
-        scale: tool === 'remove-noise' ? 1 : options.scale ?? 4,
-        face_enhance: tool === 'super-resolution' ? !!options.faceEnhance : false,
-      };
+      input = { image: imageData, task_type: 'Real-World Image Super-Resolution-Large' };
     }
 
     let output: unknown;
     try {
       output = await this.replicate.run(model as `${string}/${string}`, { input });
     } catch (err) {
+      console.error(`[AI] ${tool} failed:`, err);
+      const status = (err as any)?.response?.status;
+      if (status === 429) {
+        throw new HttpException(
+          'The AI service is busy right now. Please wait a moment and try again.',
+          HttpStatus.TOO_MANY_REQUESTS,
+        );
+      }
       throw new InternalServerErrorException(
         `AI provider error: ${(err as Error).message}`,
       );

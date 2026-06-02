@@ -1,35 +1,25 @@
 import { Link } from 'react-router-dom';
 import BeforeAfterSlider from '../components/BeforeAfterSlider';
 
-// Placeholder before/after pairs. Replace `before`/`after` with real image
-// paths (e.g. "/demo/super-res-before.jpg") once assets are ready.
-const ph = (label: string, bg: string, fg = '#F4F4F5') =>
-  `data:image/svg+xml;utf8,${encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="480" height="300">
-      <rect width="480" height="300" fill="${bg}"/>
-      <text x="50%" y="50%" fill="${fg}" font-family="sans-serif" font-size="20"
-        text-anchor="middle" dominant-baseline="middle">${label}</text>
-    </svg>`,
-  )}`;
-
 const tools = [
   {
     label: 'Super Resolution',
     desc: 'Upscale images up to 4x without losing detail.',
-    before: ph('Low-res', '#1E1E2E', '#71717A'),
-    after: ph('4x Upscaled', '#2A1E3E'),
+    before: '/demo/showcase-sr.jpg',
+    after: '/demo/showcase-sr-after.png',
   },
   {
     label: 'Noise Removal',
     desc: 'Clean up grain and artifacts from any photo.',
-    before: ph('Noisy', '#1E1E2E', '#71717A'),
-    after: ph('Denoised', '#1E2A3E'),
+    before: '/demo/showcase-noise.png',
+    after: '/demo/showcase-noise-after.png',
   },
   {
     label: 'Background Removal',
     desc: 'Remove backgrounds instantly with AI precision.',
-    before: ph('With Background', '#1E1E2E', '#71717A'),
-    after: ph('No Background', '#0A2A24'),
+    before: '/demo/showcase-bg-small.jpg',
+    after: '/demo/showcase-bg-after.png',
+    checkerboard: true,
   },
 ];
 
@@ -89,21 +79,22 @@ export default function WelcomePage() {
       </section>
 
       {/* Results */}
-      <section id="results" className="py-24 px-6 bg-[#12121A]/50">
-        <div className="max-w-5xl mx-auto">
+      <section id="results" className="py-24 px-10 bg-[#12121A]/50">
+        <div className="max-w-[1600px] mx-auto">
           <p className="text-xs font-bold tracking-widest text-[#7C3AED] uppercase mb-3 text-center">RESULTS</p>
           <h2 className="text-3xl font-bold text-white text-center mb-14">What you can do with phiXora</h2>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-8">
             {tools.map((t) => (
-              <div key={t.label} className="p-6 rounded-2xl border border-[#1E1E2E] bg-[#12121A] hover:border-[#06D6A0]/40 transition-all">
+              <div key={t.label} className="p-4 rounded-2xl border border-[#1E1E2E] bg-[#12121A] hover:border-[#06D6A0]/40 transition-all">
                 <BeforeAfterSlider
                   beforeUrl={t.before}
                   afterUrl={t.after}
-                  aspectRatio="16/10"
+                  aspectRatio="4/3"
+                  showCheckerboard={'checkerboard' in t && t.checkerboard}
                   className="rounded-xl mb-4"
                 />
-                <h3 className="text-white font-semibold mb-1">{t.label}</h3>
-                <p className="text-[#71717A] text-sm">{t.desc}</p>
+                <h3 className="text-white font-semibold mb-1 px-2">{t.label}</h3>
+                <p className="text-[#71717A] text-sm px-2 pb-2">{t.desc}</p>
               </div>
             ))}
           </div>

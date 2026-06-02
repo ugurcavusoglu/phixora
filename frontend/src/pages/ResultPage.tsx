@@ -4,10 +4,11 @@ import Sidebar from '../components/Sidebar';
 import BeforeAfterSlider from '../components/BeforeAfterSlider';
 
 export default function ResultPage() {
-  const { file, outputUrl, tool, isDemo, demoOriginalUrl, reset } = useImageStore();
+  const { file, outputUrl, tool, isDemo, demoOriginalUrl, viewBeforeUrl, reset } = useImageStore();
   const navigate = useNavigate();
 
-  const inputUrl = isDemo ? demoOriginalUrl : file ? URL.createObjectURL(file) : null;
+  // Before image: history item's original, else demo sample, else the uploaded file.
+  const inputUrl = viewBeforeUrl ?? (isDemo ? demoOriginalUrl : file ? URL.createObjectURL(file) : null);
 
   const handleExport = () => {
     if (!outputUrl) return;
@@ -37,8 +38,9 @@ export default function ResultPage() {
         <BeforeAfterSlider
           beforeUrl={inputUrl}
           afterUrl={outputUrl}
-          aspectRatio="16/10"
-          className="w-full max-w-2xl rounded-2xl"
+          fitToImage
+          showCheckerboard={tool === 'remove-background'}
+          className="w-full max-w-3xl rounded-2xl"
         />
 
         <div className="flex gap-3">
