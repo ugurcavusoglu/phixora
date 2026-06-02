@@ -10,7 +10,11 @@ export default defineConfig({
         target: 'http://localhost:3000',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
+        timeout: 10 * 60 * 1000,
+        proxyTimeout: 10 * 60 * 1000,
       },
+      '/outputs': { target: 'http://localhost:3000', changeOrigin: true },
+      '/uploads': { target: 'http://localhost:3000', changeOrigin: true },
     },
   },
 })

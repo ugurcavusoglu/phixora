@@ -71,13 +71,16 @@ export default function ResultPage() {
           onMouseUp={() => { dragging.current = false; }}
           onMouseLeave={() => { dragging.current = false; }}
         >
-          {/* After (output) — full width */}
-          <img src={outputUrl} alt="output" className="absolute inset-0 w-full h-full object-cover" />
+          {/* After (enhanced) — full background */}
+          <img src={outputUrl} alt="enhanced" className="absolute inset-0 w-full h-full object-cover" />
 
-          {/* Before (input) — clipped to left side */}
-          <div className="absolute inset-0 overflow-hidden" style={{ width: `${sliderX}%` }}>
-            <img src={inputUrl} alt="input" className="absolute inset-0 w-full h-full object-cover" style={{ width: `${10000 / sliderX}%`, maxWidth: 'none' }} />
-          </div>
+          {/* Before (original) — clipped to left of slider */}
+          <img
+            src={inputUrl}
+            alt="original"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ clipPath: `inset(0 ${100 - sliderX}% 0 0)` }}
+          />
 
           {/* Divider */}
           <div className="absolute top-0 bottom-0 w-0.5 bg-white/80" style={{ left: `${sliderX}%` }}>

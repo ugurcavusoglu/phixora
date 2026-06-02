@@ -72,7 +72,7 @@ Web-based AI image editing tool for non-technical users. Users upload images, ap
 | ORM      | Prisma                              |
 | Database | PostgreSQL                          |
 | Auth     | Passport.js — JWT + Google OAuth    |
-| AI       | External APIs (TBD)                 |
+| AI       | Replicate API (Real-ESRGAN, rembg)  |
 
 ### Repo Structure
 
@@ -107,8 +107,8 @@ Phixora_codebase/
 ### Key Rules
 
 - **Auth**: All routes except Welcome, Login, Signup require a valid JWT. Use NestJS `JwtAuthGuard`.
-- **Image storage**: Store URLs (not raw files) in the database. Upload to a storage service (TBD), save the URL.
-- **AI APIs**: All external AI calls happen in the backend (`image` module). Frontend never calls AI APIs directly.
+- **Image storage**: Uploads are saved to `backend/uploads/`, AI results to `backend/outputs/`, both served statically. The DB `History` table stores the URL paths (`/uploads/...`, `/outputs/...`), not the raw bytes.
+- **AI APIs**: All AI calls happen in the backend (`image` module) via Replicate. Frontend never calls AI APIs directly. `REPLICATE_API_TOKEN` must be set.
 - **History**: Every successful AI operation is saved to the `History` table automatically.
 - **Error handling**: Validate at API boundaries (file type, file size, missing fields). Don't validate internally.
 
@@ -124,4 +124,5 @@ DATABASE_URL=
 JWT_SECRET=
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
+REPLICATE_API_TOKEN=
 ```

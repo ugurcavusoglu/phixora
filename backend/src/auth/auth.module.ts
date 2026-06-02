@@ -9,9 +9,11 @@ import { GoogleStrategy } from './strategies/google.strategy';
 @Module({
   imports: [
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '7d' },
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: process.env.JWT_SECRET || 'phixora-fallback-secret',
+        signOptions: { expiresIn: '7d' as const },
+      }),
     }),
   ],
   providers: [AuthService, JwtStrategy, GoogleStrategy],

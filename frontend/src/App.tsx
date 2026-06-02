@@ -8,6 +8,9 @@ import WelcomePage from './pages/WelcomePage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import FeaturesPage from './pages/FeaturesPage';
+import TutorialPage from './pages/TutorialPage';
+import ContactPage from './pages/ContactPage';
 import UploadPage from './pages/UploadPage';
 import ToolsPage from './pages/ToolsPage';
 import ProcessPage from './pages/ProcessPage';
@@ -33,6 +36,9 @@ export default function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
           <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/features" element={<FeaturesPage />} />
+          <Route path="/tutorial" element={<TutorialPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
 
           <Route path="/upload" element={<ProtectedRoute><UploadPage /></ProtectedRoute>} />

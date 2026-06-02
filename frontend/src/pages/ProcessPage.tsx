@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useImageStore } from '../store/imageStore';
 import { processImage } from '../api/image';
@@ -9,26 +9,40 @@ const TOOL_LABELS: Record<string, string> = {
   'remove-background': 'Remove Background',
 };
 
+const TOOL_HINTS: Record<string, string> = {
+  'super-resolution': 'Upscaling with Real-ESRGAN — this usually takes a few seconds.',
+  'remove-noise': 'Cleaning up noise — this usually takes a few seconds.',
+  'remove-background': 'Removing background — this usually takes a few seconds.',
+};
+
 export default function ProcessPage() {
-  const { file, tool, setResult } = useImageStore();
+  const { file, tool, scale, intensity, faceEnhance, setResult } = useImageStore();
   const [progress, setProgress] = useState(0);
+  const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const startTime = useRef(Date.now());
 
   useEffect(() => {
     if (!file || !tool) { navigate('/upload'); return; }
 
-    // Fake progress animation while waiting for API
+    // Animate progress toward 99% over ~15s; snaps to 100% when the API returns
     const interval = setInterval(() => {
-      setProgress((p) => (p < 90 ? p + 10 : p));
+      setProgress((p) => {
+        if (p < 60) return p + 6;
+        if (p < 85) return p + 1.5;
+        if (p < 99) return p + 0.3;
+        return p;
+      });
+      setElapsed(Math.floor((Date.now() - startTime.current) / 1000));
     }, 400);
 
-    processImage(file, tool)
+    processImage(file, tool, { scale, intensity, faceEnhance })
       .then(({ data }) => {
         clearInterval(interval);
         setProgress(100);
         setResult(data.outputUrl, data.historyId);
-        setTimeout(() => navigate('/result'), 500);
+        setTimeout(() => navigate('/result'), 600);
       })
       .catch(() => {
         clearInterval(interval);
@@ -39,24 +53,31 @@ export default function ProcessPage() {
   }, []);
 
   const toolLabel = tool ? TOOL_LABELS[tool] : '';
+  const hint = tool ? TOOL_HINTS[tool] : '';
   const circumference = 2 * Math.PI * 45;
+  const displayProgress = Math.min(Math.round(progress), 99);
+
+  const formatElapsed = (s: number) => {
+    if (s < 60) return `${s}s`;
+    return `${Math.floor(s / 60)}m ${s % 60}s`;
+  };
 
   return (
     <div className="min-h-screen flex bg-[#0A0A0F]">
       <aside className="w-56 border-r border-[#1E1E2E] bg-[#12121A] p-4 flex flex-col gap-1 shrink-0">
-        {['Super Resolution', 'Remove Noise', 'Remove Background'].map((t) => (
+        {Object.entries(TOOL_LABELS).map(([id, label]) => (
           <div
-            key={t}
+            key={id}
             className={`px-3 py-2 rounded-lg text-sm ${
-              TOOL_LABELS[tool || ''] === t ? 'bg-[#7C3AED]/20 text-[#A855F7]' : 'text-[#71717A]'
+              tool === id ? 'bg-[#7C3AED]/20 text-[#A855F7]' : 'text-[#71717A]'
             }`}
           >
-            {t}
+            {label}
           </div>
         ))}
       </aside>
 
-      <main className="flex-1 flex flex-col items-center justify-center gap-6">
+      <main className="flex-1 flex flex-col items-center justify-center gap-6 px-8">
         {error ? (
           <div className="text-center">
             <p className="text-red-400 mb-4">{error}</p>
@@ -70,23 +91,46 @@ export default function ProcessPage() {
         ) : (
           <>
             <p className="text-white font-semibold text-lg">{toolLabel}</p>
-            <div className="relative w-32 h-32">
+
+            <div className="relative w-36 h-36">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="45" fill="none" stroke="#1E1E2E" strokeWidth="8" />
+                <circle cx="50" cy="50" r="45" fill="none" stroke="#1E1E2E" strokeWidth="7" />
                 <circle
                   cx="50" cy="50" r="45" fill="none"
-                  stroke="#7C3AED" strokeWidth="8"
+                  stroke="url(#grad)" strokeWidth="7"
                   strokeDasharray={circumference}
-                  strokeDashoffset={circumference * (1 - progress / 100)}
+                  strokeDashoffset={circumference * (1 - Math.min(progress, 99) / 100)}
                   strokeLinecap="round"
-                  style={{ transition: 'stroke-dashoffset 0.4s ease' }}
+                  style={{ transition: 'stroke-dashoffset 0.6s ease' }}
                 />
+                <defs>
+                  <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#7C3AED" />
+                    <stop offset="100%" stopColor="#06D6A0" />
+                  </linearGradient>
+                </defs>
               </svg>
-              <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-xl">
-                {progress}%
+              <span className="absolute inset-0 flex items-center justify-center text-white font-bold text-2xl">
+                {displayProgress}%
               </span>
             </div>
-            <p className="text-[#71717A] text-sm">Editing… please wait</p>
+
+            <div className="text-center space-y-1">
+              <p className="text-[#71717A] text-sm">
+                {elapsed > 120 ? 'Still processing, almost done…' : 'Editing… please wait'}
+              </p>
+              {elapsed > 0 && (
+                <p className="text-[#71717A] text-xs">
+                  Elapsed: {formatElapsed(elapsed)}
+                </p>
+              )}
+            </div>
+
+            {hint && (
+              <div className="max-w-xs text-center px-4 py-3 rounded-xl border border-[#1E1E2E] bg-[#12121A]">
+                <p className="text-[#71717A] text-xs leading-relaxed">{hint}</p>
+              </div>
+            )}
           </>
         )}
       </main>

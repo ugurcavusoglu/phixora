@@ -2,7 +2,7 @@
 
 Web-based AI image editing tool. Upload an image, apply AI enhancements (super-resolution, noise removal, background removal), download the result.
 
-**Stack:** React + TypeScript + Vite · NestJS · Prisma · PostgreSQL (Docker) · Passport (JWT + Google OAuth)
+**Stack:** React + TypeScript + Vite · NestJS · Prisma · PostgreSQL (Docker) · Passport (JWT + Google OAuth) · Replicate API
 
 ---
 
@@ -10,95 +10,131 @@ Web-based AI image editing tool. Upload an image, apply AI enhancements (super-r
 
 - Node.js 20+
 - Docker Desktop
+- A [Replicate](https://replicate.com/account/api-tokens) API token (for AI processing)
+
+---
 
 ## Setup
 
-### 1. Clone and install
+### 1. Clone the repo
 
 ```bash
-# Frontend
-cd frontend
-npm install
+git clone <repo-url>
+cd phixora
+```
 
+### 2. Install Node dependencies
+
+```bash
 # Backend
 cd backend
 npm install
+
+# Frontend (open a new terminal)
+cd frontend
+npm install
 ```
 
-### 2. Configure environment
+### 3. Configure environment
 
 ```bash
 cd backend
 cp .env.example .env
-# .env.example already has working defaults for local Docker setup
-# Optionally fill in GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET for Google OAuth
 ```
 
-### 3. Start the database
+`.env` dosyasını aç ve şu değerleri düzenle:
+
+```env
+DATABASE_URL=postgresql://postgres:postgres@localhost:5433/phixora
+JWT_SECRET=your-secret-key-here
+REPLICATE_API_TOKEN=r8_your_token_here
+UPLOAD_DIR=uploads
+OUTPUT_DIR=outputs
+MAX_UPLOAD_MB=10
+```
+
+- `REPLICATE_API_TOKEN`: https://replicate.com/account/api-tokens adresinden alınır. AI işlemleri için zorunlu.
+- Google OAuth kullanmak istersen `GOOGLE_CLIENT_ID` ve `GOOGLE_CLIENT_SECRET` değerlerini de doldur (zorunlu değil, email/şifre ile giriş çalışır).
+
+### 4. Veritabanını başlat
 
 ```bash
-# From project root
+# Proje kökünden (docker-compose.yml'ın bulunduğu yer)
 docker compose up -d
 ```
 
-> PostgreSQL runs on port **5433** (to avoid conflicts with any local PostgreSQL on 5432).
+PostgreSQL **5433** portunda çalışır.
 
-### 4. Run migrations
+### 5. Prisma migration çalıştır
 
 ```bash
 cd backend
 npx prisma migrate dev --name init
 ```
 
-### 5. Run
+---
 
+## Çalıştırma
+
+Her biri **ayrı bir terminalde** açılmalı:
+
+**Terminal 1 — Backend:**
 ```bash
-# Backend (port 3000)
 cd backend
-npm run build && node dist/src/main.js
+npm run start:dev
+```
+Backend: http://localhost:3000
 
-# Frontend (port 5173) — separate terminal
+**Terminal 2 — Frontend:**
+```bash
 cd frontend
 npm run dev
 ```
+Frontend: http://localhost:5173
 
-Frontend: http://localhost:5173  
-Backend: http://localhost:3000
-
----
-
-## Notes
-
-- Google OAuth requires `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in `.env`. Email/password auth works without it.
-- AI processing is stubbed — the backend returns the original image. Replace the stub in `backend/src/image/image.service.ts` with a real API call.
+**Terminal 3 — Veritabanı (ilk seferden sonra arka planda çalışır):**
+```bash
+docker compose up -d
+```
 
 ---
 
-## Project Structure
+## Önemli Notlar
+
+- AI işlemleri Replicate API üzerinden yapılır (super-resolution & denoise: Real-ESRGAN, background removal: rembg). Kendi modelimiz/ağırlığımız yok.
+- İşlenen resimler `backend/outputs/`, yüklenen orijinaller `backend/uploads/` klasörüne kaydedilir.
+- Google OAuth `GOOGLE_CLIENT_ID` ve `GOOGLE_CLIENT_SECRET` olmadan çalışmaz, ama email/şifre girişi her durumda çalışır.
+
+---
+
+## Proje Yapısı
 
 ```
-Phixora_codebase/
-├── docker-compose.yml   # PostgreSQL on port 5433
+phixora/
+├── docker-compose.yml        # PostgreSQL (port 5433)
 ├── frontend/
 │   └── src/
-│       ├── pages/       # WelcomePage, LoginPage, SignupPage, UploadPage, ToolsPage, ProcessPage, ResultPage, HistoryPage, ProfilePage
-│       ├── components/  # Navbar, ProtectedRoute
-│       ├── store/       # authStore (Zustand), imageStore (Zustand)
-│       └── api/         # auth.ts, image.ts, history.ts, client.ts
+│       ├── pages/            # WelcomePage, LoginPage, SignupPage, UploadPage,
+│       │                     # ToolsPage, ProcessPage, ResultPage, HistoryPage,
+│       │                     # FeaturesPage, TutorialPage, ContactPage
+│       ├── components/       # Navbar, ProtectedRoute
+│       ├── store/            # authStore, imageStore (Zustand)
+│       └── api/              # auth.ts, image.ts, history.ts, client.ts
 └── backend/
     ├── src/
-    │   ├── auth/        # JWT + Google OAuth, guards, strategies
-    │   ├── image/       # Upload + AI stub
-    │   ├── history/     # CRUD
-    │   └── prisma/      # PrismaService
+    │   ├── auth/             # JWT + Google OAuth, guards, strategies
+    │   ├── image/            # Upload + Replicate AI processing
+    │   ├── history/          # Geçmiş işlemler CRUD
+    │   ├── contact/          # İletişim formu endpoint
+    │   └── prisma/           # PrismaService
     └── prisma/
         └── schema.prisma
 ```
 
 ## Group
 
-CENG318 — Group 10  
-- Ugur Mert Cavusoglu — Backend  
-- Samet Buldanlioglu — AI Integration & Backend  
-- Furkan Orhan — Backend  
+CENG318 — Group 10
+- Ugur Mert Cavusoglu — Backend
+- Samet Buldanlioglu — AI Integration & Backend
+- Furkan Orhan — Backend
 - Melike Dogru — Frontend

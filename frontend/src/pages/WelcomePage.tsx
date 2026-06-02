@@ -45,7 +45,7 @@ export default function WelcomePage() {
       </section>
 
       {/* How to use */}
-      <section className="py-24 px-6">
+      <section id="tutorial" className="py-24 px-6">
         <div className="max-w-5xl mx-auto">
           <p className="text-xs font-bold tracking-widest text-[#7C3AED] uppercase mb-3 text-center">HOW TO USE?</p>
           <h2 className="text-3xl font-bold text-white text-center mb-14">Three steps to perfection</h2>
@@ -62,7 +62,7 @@ export default function WelcomePage() {
       </section>
 
       {/* Results */}
-      <section className="py-24 px-6 bg-[#12121A]/50">
+      <section id="features" className="py-24 px-6 bg-[#12121A]/50">
         <div className="max-w-5xl mx-auto">
           <p className="text-xs font-bold tracking-widest text-[#7C3AED] uppercase mb-3 text-center">RESULTS</p>
           <h2 className="text-3xl font-bold text-white text-center mb-14">What you can do with phiXora</h2>
@@ -92,7 +92,7 @@ export default function WelcomePage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-[#1E1E2E] py-8 px-6 flex items-center justify-between text-[#71717A] text-sm">
+      <footer id="contact" className="border-t border-[#1E1E2E] py-8 px-6 flex items-center justify-between text-[#71717A] text-sm">
         <span><span className="text-[#A855F7]">◇</span> phiXora</span>
         <span>CENG318 — Group 10</span>
       </footer>
