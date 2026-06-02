@@ -19,6 +19,7 @@ import HistoryPage from './pages/HistoryPage';
 import ProfilePage from './pages/ProfilePage';
 import NotFoundPage from './pages/NotFoundPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
+import DemoUploadPage from './pages/DemoUploadPage';
 
 export default function App() {
   const { token, fetchMe } = useAuthStore();
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="/tutorial" element={<TutorialPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
+          <Route path="/demo" element={<DemoUploadPage />} />
 
           <Route path="/upload" element={<ProtectedRoute><UploadPage /></ProtectedRoute>} />
           <Route path="/tools" element={<ProtectedRoute><ToolsPage /></ProtectedRoute>} />

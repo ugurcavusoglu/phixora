@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 const STEPS = [
   {
     step: '01',
-    title: 'Create Account or Continue as Guest',
-    desc: 'Sign up with your email or log in with Google. You can also browse the tools as a guest.',
+    title: 'Create an Account (or Try the Demo)',
+    desc: 'Sign up with your email or log in with Google to process your own images. No account? Try the demo on sample images first.',
     icon: '◈',
     color: '#7C3AED',
   },
@@ -126,10 +126,10 @@ export default function TutorialPage() {
               Create Account
             </Link>
             <Link
-              to="/upload"
+              to="/demo"
               className="px-8 py-3 rounded-xl border border-[#1E1E2E] text-[#71717A] hover:text-white hover:border-[#7C3AED]/50 transition-all"
             >
-              Try Without Account
+              Try a Demo
             </Link>
           </div>
         </div>

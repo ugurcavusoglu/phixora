@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useImageStore } from '../store/imageStore';
 import { processImage } from '../api/image';
+import { DEMO_SAMPLES } from '../demo/demoData';
+import Sidebar from '../components/Sidebar';
 
 const TOOL_LABELS: Record<string, string> = {
   'super-resolution': 'Super Resolution',
@@ -16,7 +18,7 @@ const TOOL_HINTS: Record<string, string> = {
 };
 
 export default function ProcessPage() {
-  const { file, tool, scale, intensity, faceEnhance, setResult } = useImageStore();
+  const { file, tool, scale, intensity, faceEnhance, isDemo, demoOriginalUrl, setResult } = useImageStore();
   const [progress, setProgress] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState('');
@@ -24,9 +26,9 @@ export default function ProcessPage() {
   const startTime = useRef(Date.now());
 
   useEffect(() => {
-    if (!file || !tool) { navigate('/upload'); return; }
+    if ((!file && !isDemo) || !tool) { navigate('/upload'); return; }
 
-    // Animate progress toward 99% over ~15s; snaps to 100% when the API returns
+    // Animate progress toward 99% over ~15s; snaps to 100% when done
     const interval = setInterval(() => {
       setProgress((p) => {
         if (p < 60) return p + 6;
@@ -37,13 +39,28 @@ export default function ProcessPage() {
       setElapsed(Math.floor((Date.now() - startTime.current) / 1000));
     }, 400);
 
-    processImage(file, tool, { scale, intensity, faceEnhance })
-      .then(({ data }) => {
+    const finish = (outputUrl: string, historyId: string) => {
+      clearInterval(interval);
+      setProgress(100);
+      setResult(outputUrl, historyId);
+      setTimeout(() => navigate('/result'), 600);
+    };
+
+    if (isDemo) {
+      // Demo mode: no backend call. Use the pre-baked result after a short delay.
+      const sample = DEMO_SAMPLES.find((s) => s.original === demoOriginalUrl);
+      const resultUrl = sample?.results[tool];
+      if (!resultUrl) {
         clearInterval(interval);
-        setProgress(100);
-        setResult(data.outputUrl, data.historyId);
-        setTimeout(() => navigate('/result'), 600);
-      })
+        setError('Demo result not available.');
+        return () => clearInterval(interval);
+      }
+      const timer = setTimeout(() => finish(resultUrl, 'demo'), 2500);
+      return () => { clearInterval(interval); clearTimeout(timer); };
+    }
+
+    processImage(file!, tool, { scale, intensity, faceEnhance })
+      .then(({ data }) => finish(data.outputUrl, data.historyId))
       .catch(() => {
         clearInterval(interval);
         setError('Processing failed. Please try again.');
@@ -64,18 +81,7 @@ export default function ProcessPage() {
 
   return (
     <div className="min-h-screen flex bg-[#0A0A0F]">
-      <aside className="w-56 border-r border-[#1E1E2E] bg-[#12121A] p-4 flex flex-col gap-1 shrink-0">
-        {Object.entries(TOOL_LABELS).map(([id, label]) => (
-          <div
-            key={id}
-            className={`px-3 py-2 rounded-lg text-sm ${
-              tool === id ? 'bg-[#7C3AED]/20 text-[#A855F7]' : 'text-[#71717A]'
-            }`}
-          >
-            {label}
-          </div>
-        ))}
-      </aside>
+      <Sidebar active="tools" activeTool={tool} />
 
       <main className="flex-1 flex flex-col items-center justify-center gap-6 px-8">
         {error ? (

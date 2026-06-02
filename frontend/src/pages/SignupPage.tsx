@@ -84,7 +84,7 @@ export default function SignupPage() {
           </button>
 
           <p className="text-center text-sm text-[#71717A] mt-4">
-            <Link to="/" className="hover:text-[#A855F7] transition-colors">Continue as Guest</Link>
+            <Link to="/demo" className="hover:text-[#A855F7] transition-colors">Try a Demo (no account)</Link>
           </p>
           <p className="text-center text-sm text-[#71717A] mt-2">
             Already have an account?{' '}

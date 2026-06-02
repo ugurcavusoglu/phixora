@@ -39,6 +39,7 @@ export default function Navbar() {
         <div className="flex items-center gap-3">
           <Link to="/features" className="text-sm text-[#71717A] hover:text-white transition-colors">Features</Link>
           <Link to="/tutorial" className="text-sm text-[#71717A] hover:text-white transition-colors">Tutorial</Link>
+          <Link to="/#results" className="text-sm text-[#71717A] hover:text-white transition-colors">Results</Link>
           <Link to="/contact" className="text-sm text-[#71717A] hover:text-white transition-colors">Contact</Link>
           <Link to="/login" className="text-sm px-4 py-1.5 rounded-lg border border-[#1E1E2E] text-[#F4F4F5] hover:border-[#7C3AED] transition-all">
             Login

@@ -1,15 +1,16 @@
 import { useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useImageStore } from '../store/imageStore';
+import Sidebar from '../components/Sidebar';
 
 export default function ResultPage() {
-  const { file, outputUrl, tool, reset } = useImageStore();
+  const { file, outputUrl, tool, isDemo, demoOriginalUrl, reset } = useImageStore();
   const [sliderX, setSliderX] = useState(50);
   const containerRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
   const navigate = useNavigate();
 
-  const inputUrl = file ? URL.createObjectURL(file) : null;
+  const inputUrl = isDemo ? demoOriginalUrl : file ? URL.createObjectURL(file) : null;
 
   const onMouseMove = useCallback((e: React.MouseEvent) => {
     if (!dragging.current || !containerRef.current) return;
@@ -27,37 +28,19 @@ export default function ResultPage() {
   };
 
   const handleNewImage = () => {
+    const target = isDemo ? '/demo' : '/upload';
     reset();
-    navigate('/upload');
+    navigate(target);
   };
 
   if (!outputUrl || !inputUrl) {
-    navigate('/upload');
+    navigate(isDemo ? '/demo' : '/upload');
     return null;
   }
 
-  const TOOL_LABELS: Record<string, string> = {
-    'super-resolution': 'Super Resolution',
-    'remove-noise': 'Remove Noise',
-    'remove-background': 'Remove Background',
-  };
-
   return (
     <div className="min-h-screen flex bg-[#0A0A0F]">
-      {/* Sidebar */}
-      <aside className="w-56 border-r border-[#1E1E2E] bg-[#12121A] p-4 shrink-0">
-        <button onClick={() => navigate('/upload')} className="flex items-center gap-2 px-3 py-2 rounded-lg text-white bg-[#1E1E2E] text-sm font-medium w-full">
-          ✦ Tools
-        </button>
-        <button onClick={() => navigate('/history')} className="flex items-center gap-2 px-3 py-2 rounded-lg text-[#71717A] hover:text-white text-sm transition-colors w-full mt-1">
-          ⟳ History
-        </button>
-        <div className="mt-4 pt-4 border-t border-[#1E1E2E]">
-          <div className="px-3 py-2 rounded-lg bg-[#7C3AED]/20 text-[#A855F7] text-sm">
-            • {TOOL_LABELS[tool || '']}
-          </div>
-        </div>
-      </aside>
+      <Sidebar active="tools" activeTool={tool} />
 
       {/* Main */}
       <main className="flex-1 flex flex-col items-center justify-center gap-6 p-8">

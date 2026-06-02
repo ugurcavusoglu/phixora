@@ -96,6 +96,13 @@ export default function LoginPage() {
             Continue with Google
           </button>
 
+          <button
+            onClick={() => navigate('/demo')}
+            className="w-full py-2.5 mt-2 rounded-lg border border-[#1E1E2E] text-[#71717A] hover:text-white hover:border-[#7C3AED]/50 transition-all text-sm"
+          >
+            Try a Demo (no account)
+          </button>
+
           <p className="text-center text-sm text-[#71717A] mt-6">
             Don't have an account?{' '}
             <Link to="/signup" className="text-[#A855F7] hover:underline">Sign Up</Link>

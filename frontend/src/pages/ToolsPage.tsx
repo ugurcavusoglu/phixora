@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useImageStore } from '../store/imageStore';
 import { type Tool } from '../api/image';
@@ -8,19 +9,23 @@ const TOOLS: { id: Tool; label: string; icon: string; desc: string }[] = [
   { id: 'remove-background', label: 'Remove Background', icon: '⊙', desc: 'Auto background removal' },
 ];
 
-const INTENSITY_LEVELS: { value: 'low' | 'medium' | 'high'; label: string }[] = [
-  { value: 'low', label: 'Low' },
-  { value: 'medium', label: 'Medium' },
-  { value: 'high', label: 'High' },
+// Wireframe "Cleanup Level" presets, mapped to the backend's low/medium/high intensity.
+const CLEANUP_LEVELS: { label: string; value: 'low' | 'medium' | 'high' }[] = [
+  { label: 'Light Touch', value: 'low' },
+  { label: 'Balanced', value: 'medium' },
+  { label: 'Deep Clean', value: 'high' },
+  { label: 'Night Shot', value: 'high' },
 ];
 
 export default function ToolsPage() {
-  const { file, tool, scale, intensity, faceEnhance, setTool, setScale, setIntensity, setFaceEnhance } = useImageStore();
+  const { file, tool, scale, faceEnhance, isDemo, demoOriginalUrl, setTool, setScale, setIntensity, setFaceEnhance } = useImageStore();
+  const [cleanupLabel, setCleanupLabel] = useState('Balanced');
+  const [sliderIntensity, setSliderIntensity] = useState(50);
   const navigate = useNavigate();
 
-  const preview = file ? URL.createObjectURL(file) : null;
+  const preview = isDemo ? demoOriginalUrl : file ? URL.createObjectURL(file) : null;
 
-  if (!file) {
+  if (!file && !isDemo) {
     navigate('/upload');
     return null;
   }
@@ -114,22 +119,40 @@ export default function ToolsPage() {
         )}
 
         {tool === 'remove-noise' && (
-          <div className="mt-4 pt-4 border-t border-[#1E1E2E]">
-            <p className="text-xs font-bold tracking-widest text-[#71717A] uppercase mb-3">Intensity</p>
-            <div className="flex flex-col gap-1.5">
-              {INTENSITY_LEVELS.map((l) => (
-                <button
-                  key={l.value}
-                  onClick={() => setIntensity(l.value)}
-                  className={`px-3 py-2 rounded-lg text-sm transition-all text-left ${
-                    intensity === l.value
-                      ? 'bg-[#7C3AED] text-white'
-                      : 'bg-[#0A0A0F] border border-[#1E1E2E] text-[#71717A] hover:border-[#7C3AED]/50'
-                  }`}
-                >
-                  {l.label}
-                </button>
-              ))}
+          <div className="mt-4 pt-4 border-t border-[#1E1E2E] space-y-4">
+            <div>
+              <p className="text-xs font-bold tracking-widest text-[#71717A] uppercase mb-3">Cleanup Level</p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {CLEANUP_LEVELS.map((l) => (
+                  <button
+                    key={l.label}
+                    onClick={() => { setCleanupLabel(l.label); setIntensity(l.value); }}
+                    className={`px-2 py-2 rounded-lg text-xs font-medium transition-all ${
+                      cleanupLabel === l.label
+                        ? 'bg-[#7C3AED] text-white'
+                        : 'bg-[#0A0A0F] border border-[#1E1E2E] text-[#71717A] hover:border-[#7C3AED]/50'
+                    }`}
+                  >
+                    {l.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold tracking-widest text-[#71717A] uppercase mb-2">Intensity</p>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                value={sliderIntensity}
+                onChange={(e) => setSliderIntensity(Number(e.target.value))}
+                className="w-full accent-[#7C3AED]"
+              />
+              <div className="flex justify-between text-[10px] text-[#71717A] mt-1">
+                <span>Gentle</span>
+                <span>Aggressive</span>
+              </div>
             </div>
           </div>
         )}
@@ -153,7 +176,7 @@ export default function ToolsPage() {
           />
         )}
         <button
-          onClick={() => navigate('/upload')}
+          onClick={() => navigate(isDemo ? '/demo' : '/upload')}
           className="px-4 py-2 rounded-lg border border-[#1E1E2E] text-[#71717A] hover:text-white hover:border-[#7C3AED]/50 text-sm transition-all"
         >
           Change Image
