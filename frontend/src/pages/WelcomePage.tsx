@@ -40,9 +40,6 @@ export default function WelcomePage() {
             <Link to="/demo" className="px-8 py-3 rounded-xl border border-[#06D6A0]/40 text-[#06D6A0] hover:bg-[#06D6A0]/10 transition-all">
               Try Demo
             </Link>
-            <Link to="/login" className="px-8 py-3 rounded-xl border border-[#1E1E2E] text-[#F4F4F5] hover:border-[#7C3AED] transition-all">
-              Log In
-            </Link>
           </div>
         </div>
       </section>
