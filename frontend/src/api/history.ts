@@ -1,4 +1,4 @@
-import api from './client';
+import { getAll, remove } from './mockHistory';
 
 export interface HistoryItem {
   id: string;
@@ -8,6 +8,12 @@ export interface HistoryItem {
   createdAt: string;
 }
 
-export const getHistory = () => api.get<HistoryItem[]>('/history');
-export const getHistoryItem = (id: string) => api.get<HistoryItem>(`/history/${id}`);
-export const deleteHistoryItem = (id: string) => api.delete(`/history/${id}`);
+export const getHistory = () => Promise.resolve({ data: getAll() });
+export const getHistoryItem = (id: string) => {
+  const item = getAll().find((i) => i.id === id);
+  return item ? Promise.resolve({ data: item }) : Promise.reject(new Error('Not found'));
+};
+export const deleteHistoryItem = (id: string) => {
+  remove(id);
+  return Promise.resolve({ data: {} });
+};

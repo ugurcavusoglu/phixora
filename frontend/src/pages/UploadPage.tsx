@@ -4,15 +4,30 @@ import { useImageStore } from '../store/imageStore';
 import Sidebar from '../components/Sidebar';
 
 const ACCEPTED = ['image/png', 'image/jpeg', 'image/webp'];
+const MAX_MB = 20;
+
+function formatSize(bytes: number) {
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
 
 export default function UploadPage() {
   const [dragging, setDragging] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const [fileError, setFileError] = useState('');
   const { file, setFile } = useImageStore();
   const navigate = useNavigate();
 
   const handleFile = (f: File) => {
-    if (!ACCEPTED.includes(f.type)) return;
+    setFileError('');
+    if (!ACCEPTED.includes(f.type)) {
+      setFileError(`Unsupported format "${f.name.split('.').pop()?.toUpperCase()}". Please use PNG, JPG, JPEG, or WEBP.`);
+      return;
+    }
+    if (f.size > MAX_MB * 1024 * 1024) {
+      setFileError(`File is too large (${formatSize(f.size)}). Maximum allowed size is ${MAX_MB} MB.`);
+      return;
+    }
     setFile(f);
     setPreview(URL.createObjectURL(f));
   };
@@ -32,45 +47,53 @@ export default function UploadPage() {
     if (f) handleFile(f);
   };
 
-  const handleContinue = () => {
-    if (file) navigate('/tools');
-  };
+  const handleContinue = () => { if (file) navigate('/tools'); };
 
   return (
-    <div className="min-h-screen flex bg-[#0A0A0F]">
+    <div className="min-h-screen flex bg-[#F7F9FC]">
       <Sidebar active="tools" />
 
-      {/* Main */}
       <main className="flex-1 flex flex-col items-center justify-center p-8">
         <div
           onDrop={onDrop}
           onDragOver={onDragOver}
           onDragLeave={onDragLeave}
-          className={`w-full max-w-lg border-2 border-dashed rounded-2xl p-12 flex flex-col items-center justify-center gap-4 transition-all cursor-pointer ${
+          className={`w-full max-w-lg border-2 border-dashed rounded-2xl p-12 flex flex-col items-center justify-center gap-4 transition-all duration-200 cursor-pointer ${
             dragging
-              ? 'border-[#7C3AED] bg-[#7C3AED]/10'
-              : 'border-[#1E1E2E] hover:border-[#7C3AED]/50 bg-[#12121A]'
+              ? 'border-[#4F6BED] bg-[#EEF4FF]'
+              : 'border-[#E5E7EB] hover:border-[#4F6BED]/50 bg-white'
           }`}
         >
           {preview ? (
-            <img src={preview} alt="preview" className="max-h-48 rounded-xl object-contain" />
+            <img src={preview} alt="preview" className="max-h-48 rounded-xl object-contain shadow-sm" />
           ) : (
             <>
-              <div className="w-14 h-14 rounded-full bg-[#7C3AED]/20 flex items-center justify-center text-2xl text-[#A855F7]">↑</div>
-              <p className="text-white font-medium">Drag and drop</p>
-              <p className="text-[#71717A] text-xs">Supported formats: PNG, JPG, JPEG, WEBP</p>
+              <div className="w-14 h-14 rounded-full bg-[#EEF4FF] flex items-center justify-center text-2xl text-[#4F6BED]">↑</div>
+              <p className="text-[#111827] font-medium">Drag and drop</p>
+              <p className="text-[#9CA3AF] text-xs">Supported formats: PNG, JPG, JPEG, WEBP · Max {MAX_MB} MB</p>
             </>
           )}
-          <label className="px-4 py-2 rounded-lg border border-[#1E1E2E] text-sm text-white hover:border-[#7C3AED] cursor-pointer transition-all">
+          <label className="px-4 py-2 rounded-lg border border-[#E5E7EB] bg-[#F7F9FC] text-sm text-[#111827] hover:border-[#4F6BED] cursor-pointer transition-all duration-200">
             {preview ? '⟳ Change File' : '⊕ Select File'}
             <input type="file" accept=".png,.jpg,.jpeg,.webp" onChange={onSelect} className="hidden" />
           </label>
         </div>
 
+        {fileError && (
+          <p className="mt-3 text-sm text-red-500 text-center max-w-xs">{fileError}</p>
+        )}
+
+        {file && !fileError && (
+          <p className="mt-2 text-xs text-[#9CA3AF] text-center">
+            {file.name} · {formatSize(file.size)}
+          </p>
+        )}
+
         <button
           onClick={handleContinue}
           disabled={!file}
-          className="mt-6 px-10 py-3 rounded-xl bg-[#7C3AED] hover:bg-[#A855F7] text-white font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          title={!file ? 'Select an image to continue' : undefined}
+          className="mt-4 px-10 py-3 rounded-xl bg-[#4F6BED] hover:bg-[#3F56C6] text-white font-semibold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
         >
           Continue
         </button>
