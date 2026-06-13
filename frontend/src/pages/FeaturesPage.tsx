@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import superResolution from "../assets/featuresIcons/superResolution.png";
 import removeNoise from "../assets/featuresIcons/removeNoise.png";
 import removebg from "../assets/featuresIcons/removebg.png";
-import beforeAfter from "../assets/featuresIcons/before:after.png";
+import beforeAfter from "../assets/featuresIcons/before-after.png";
 import history from "../assets/featuresIcons/history.png";
 import exporticon from "../assets/featuresIcons/export.png";
 
