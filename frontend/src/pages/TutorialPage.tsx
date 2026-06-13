@@ -3,140 +3,158 @@ import { Link } from 'react-router-dom';
 const STEPS = [
   {
     step: '01',
-    title: 'Create an Account (or Try the Demo)',
-    desc: 'Sign up with your email or log in with Google to process your own images. No account? Try the demo on sample images first.',
-    icon: '◈',
-    color: '#7C3AED',
+    title: 'Upload Your Image',
+    desc: 'Drag and drop your image onto the upload area, or click to browse. Supports PNG, JPG, JPEG, and WEBP up to 20 MB.',
+    icon: '↑',
+    // tag: 'Upload',
   },
   {
     step: '02',
-    title: 'Upload Your Image',
-    desc: 'Drag and drop your image onto the upload area, or click to browse. Supports PNG, JPG, JPEG, and WEBP.',
-    icon: '↑',
-    color: '#A855F7',
+    title: 'Choose an AI Tool',
+    desc: 'Select from Super Resolution, Remove Noise, or Remove Background in the sidebar.',
+    icon: '✦',
+    // tag: 'Select Tool',
   },
   {
     step: '03',
-    title: 'Choose an AI Tool',
-    desc: 'Pick from Super Resolution (4x upscale), Remove Noise, or Remove Background in the left sidebar.',
-    icon: '✦',
-    color: '#06D6A0',
+    title: 'Adjust Settings',
+    desc: 'Configure your selected tool. Each tool has controls tuned for its specific task.',
+    icon: '⊙',
+    // tag: 'Adjust',
   },
   {
     step: '04',
-    title: 'Adjust Parameters',
-    desc: 'For Super Resolution, choose 2x or 4x scale. For Remove Noise, set the intensity from low to high.',
-    icon: '⊙',
-    color: '#7C3AED',
+    title: 'Processing',
+    desc: 'Hit Apply and start the process.',
+    icon: '⟳',
+    // tag: 'Process',
   },
   {
     step: '05',
-    title: 'Process Your Image',
-    desc: 'Hit Apply. Our backend AI will process your image and show a real-time progress indicator.',
-    icon: '⟳',
-    color: '#A855F7',
+    title: 'Compare Before & After',
+    desc: 'Drag the interactive slider to compare your original and enhanced image side by side.',
+    icon: '◇',
+    // tag: 'Compare',
   },
   {
     step: '06',
-    title: 'Compare Before / After',
-    desc: 'Drag the slider in the result page to compare your original and enhanced image side by side.',
-    icon: '◇',
-    color: '#06D6A0',
-  },
-  {
-    step: '07',
-    title: 'Export Your Result',
-    desc: 'Click Export to download your enhanced image in full quality. No watermarks added.',
+    title: 'Export or Save',
+    desc: 'Download in full quality. Every result is also saved to your History automatically.',
     icon: '↓',
-    color: '#7C3AED',
-  },
-  {
-    step: '08',
-    title: 'Reopen from History',
-    desc: 'All processed images are saved to your history. Revisit any result, re-download, or delete it.',
-    icon: '⟳',
-    color: '#A855F7',
+    // tag: 'Export',
   },
 ];
 
 export default function TutorialPage() {
   return (
-    <div className="min-h-screen bg-[#0A0A0F]">
+    <div className="min-h-screen bg-[#F7F9FC]">
+
       {/* Hero */}
-      <section className="relative flex flex-col items-center justify-center pt-32 pb-20 px-6 text-center overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[400px] bg-[#06D6A0]/10 rounded-full blur-[120px] pointer-events-none" />
+      <section className="relative flex flex-col items-center justify-center pt-32 pb-16 px-6 text-center overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#E0E7FF_0%,#F7F9FC_65%)] pointer-events-none" />
+        <div className="absolute top-1/3 right-1/3 w-[400px] h-[300px] bg-[#38BDF8]/8 rounded-full blur-[140px] pointer-events-none" />
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full border border-[#06D6A0]/40 bg-[#06D6A0]/10 text-[#06D6A0] text-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#06D6A0] animate-pulse" />
-            Step by Step
-          </div>
-          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-white mb-6 leading-tight">
+          {/* <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full border border-[#E5E7EB] bg-white text-[#4F6BED] text-sm shadow-sm">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
+            Guided Journey · 6 Steps
+          </div> */}
+          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-[#111827] mb-6 leading-tight">
             How to Use
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#06D6A0] to-[#A855F7]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4F6BED] to-[#38BDF8]">
               phiXora
             </span>
           </h1>
-          <p className="text-[#71717A] text-lg mb-10 max-w-xl mx-auto">
-            Follow these 8 simple steps to enhance your images with professional AI tools.
+          <p className="text-[#6B7280] text-lg max-w-xl mx-auto">
+            Six steps from upload to export.
           </p>
         </div>
       </section>
 
-      {/* Steps */}
+      {/* Timeline — Gestalt: Proximity, Similarity, Continuity, Common Region */}
       <section className="py-10 px-6 pb-24">
-        <div className="max-w-3xl mx-auto space-y-4">
-          {STEPS.map((s, i) => (
+        <div className="max-w-2xl mx-auto">
+          <div className="relative">
+
+            {/* Continuity: vertical connector line */}
             <div
-              key={s.step}
-              className="flex gap-5 p-6 rounded-2xl border border-[#1E1E2E] bg-[#12121A] hover:border-[#7C3AED]/30 transition-all"
-            >
-              <div className="shrink-0 flex flex-col items-center">
-                <div
-                  className="w-12 h-12 rounded-xl flex items-center justify-center text-xl font-black"
-                  style={{ backgroundColor: `${s.color}20`, color: s.color }}
-                >
-                  {s.icon}
+              className="absolute left-[23px] top-8 bottom-8 w-0.5 pointer-events-none"
+              style={{
+                background: 'linear-gradient(to bottom, #4F6BED 0%, #38BDF8 50%, #4F6BED 100%)',
+              }}
+            />
+
+            <div className="space-y-4">
+              {STEPS.map((s, i) => (
+                <div key={s.step} className="relative flex gap-5 group">
+
+                  {/* Figure-ground: numbered circle pops against the line */}
+                  <div
+                    className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-black text-white text-sm z-10 shadow-md ring-4 ring-[#F7F9FC]"
+                    style={{
+                      background: 'linear-gradient(135deg, #4F6BED, #38BDF8)',
+                    }}
+                  >
+                    {s.step}
+                  </div>
+
+                  {/* Common region: each step lives inside its own white card */}
+                  <div className="flex-1 bg-white rounded-2xl border border-[#E5E7EB] p-5 shadow-sm hover:shadow-[0_4px_16px_rgba(79,107,237,0.10)] hover:border-[#4F6BED]/40 hover:-translate-y-0.5 transition-all duration-200 mb-1">
+
+                    {/* Proximity: step label, icon, title and description are tightly grouped */}
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 bg-[#EEF4FF] text-[#4F6BED]">
+                        {s.icon}
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[12px] font-bold tracking-widest text-[#4F6BED] uppercase">
+                            Step {s.step}
+                          </span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#EEF4FF] text-[#4F6BED] font-medium">
+                            {s.tag}
+                          </span>
+                        </div>
+                        <h3 className="text-[#111827] font-semibold leading-tight">{s.title}</h3>
+                      </div>
+                    </div>
+                    <p className="text-[#6B7280] text-sm leading-relaxed pl-12">{s.desc}</p>
+
+                    {/* Continuity: subtle arrow between steps */}
+                    {/* {i < STEPS.length - 1 && (
+                      <div className="mt-3 pl-12">
+                        <span className="text-[#38BDF8] text-xs font-medium">↓ next step</span>
+                      </div>
+                    )} */}
+                  </div>
                 </div>
-                {i < STEPS.length - 1 && (
-                  <div className="w-0.5 flex-1 bg-[#1E1E2E] mt-3" />
-                )}
-              </div>
-              <div className="pt-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs font-bold tracking-widest" style={{ color: s.color }}>
-                    STEP {s.step}
-                  </span>
-                </div>
-                <h3 className="text-white font-semibold text-lg mb-1">{s.title}</h3>
-                <p className="text-[#71717A] text-sm leading-relaxed">{s.desc}</p>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
 
         {/* CTA */}
-        <div className="max-w-3xl mx-auto mt-12 text-center">
-          <p className="text-[#71717A] mb-6">Ready to give it a try?</p>
+        <div className="max-w-2xl mx-auto mt-12 text-center">
+          <p className="text-[#6B7280] mb-6">Ready to give it a try?</p>
           <div className="flex items-center justify-center gap-4">
             <Link
               to="/signup"
-              className="px-8 py-3 rounded-xl bg-gradient-to-r from-[#7C3AED] to-[#A855F7] text-white font-semibold hover:opacity-90 transition-opacity shadow-xl shadow-[#7C3AED]/20"
+              className="px-8 py-3 rounded-xl bg-gradient-to-r from-[#4F6BED] to-[#38BDF8] text-white font-semibold hover:opacity-90 transition-opacity shadow-[0_4px_16px_rgba(79,107,237,0.25)]"
             >
               Create Account
             </Link>
             <Link
               to="/demo"
-              className="px-8 py-3 rounded-xl border border-[#1E1E2E] text-[#71717A] hover:text-white hover:border-[#7C3AED]/50 transition-all"
+              className="px-8 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[#6B7280] hover:text-[#111827] hover:border-[#4F6BED] transition-all duration-200 shadow-sm"
             >
-              Try a Demo
+              Try as Guest
             </Link>
           </div>
         </div>
       </section>
 
-      <footer className="border-t border-[#1E1E2E] py-8 px-6 flex items-center justify-between text-[#71717A] text-sm">
-        <span><span className="text-[#A855F7]">◇</span> phiXora</span>
+      <footer className="border-t border-[#E5E7EB] bg-white py-8 px-6 flex items-center justify-between text-[#6B7280] text-sm">
+        <span><span className="text-[#4F6BED]">◇</span> phiXora</span>
         <span>CENG318 — Group 10</span>
       </footer>
     </div>
