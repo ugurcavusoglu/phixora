@@ -52,6 +52,7 @@ export default function WelcomeScreen({ navigation }: Props) {
         <View style={styles.actions}>
           <Button title="Get Started Free" onPress={() => navigation.navigate('Signup')} />
           <Button title="Log In" variant="outline" onPress={() => navigation.navigate('Login')} style={{ marginTop: 12 }} />
+          <Button title="Try as Guest" variant="outline" onPress={() => navigation.navigate('Demo')} style={{ marginTop: 12 }} />
         </View>
       </ScrollView>
     </SafeAreaView>

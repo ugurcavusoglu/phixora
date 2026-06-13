@@ -17,12 +17,12 @@ const LABELS: Record<string, string> = {
 };
 
 export default function ProcessScreen({ navigation }: Props) {
-  const { uri, tool, scale, intensity, faceEnhance, setResult } = useImageStore();
+  const { uri, tool, scale, intensity, faceEnhance, isDemo, demoSample, setResult } = useImageStore();
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!uri || !tool) { navigation.replace('Upload'); return; }
+    if ((!uri && !isDemo) || !tool) { navigation.replace('Upload'); return; }
     let cancelled = false;
 
     const interval = setInterval(() => {
@@ -34,14 +34,30 @@ export default function ProcessScreen({ navigation }: Props) {
       });
     }, 400);
 
-    processImage(uri, tool, { scale, intensity, faceEnhance })
-      .then(({ data }) => {
-        if (cancelled) return;
+    const finish = (outputUrl: string) => {
+      if (cancelled) return;
+      clearInterval(interval);
+      setProgress(100);
+      setResult(outputUrl);
+      setTimeout(() => navigation.replace('Result'), 500);
+    };
+
+    if (isDemo && demoSample) {
+      const resultSource = demoSample.results[tool];
+      if (!resultSource) {
         clearInterval(interval);
-        setProgress(100);
-        setResult(data.outputUrl);
-        setTimeout(() => navigation.replace('Result'), 500);
-      })
+        setError('Demo result not available for this tool.');
+        return () => clearInterval(interval);
+      }
+      // resultSource is a require()'d asset — resolve its URI via Image.resolveAssetSource
+      const { Image } = require('react-native');
+      const resolved = Image.resolveAssetSource(resultSource);
+      const timer = setTimeout(() => finish(resolved.uri), 2500);
+      return () => { cancelled = true; clearInterval(interval); clearTimeout(timer); };
+    }
+
+    processImage(uri!, tool, { scale, intensity, faceEnhance })
+      .then(({ data }) => finish(data.outputUrl))
       .catch((err) => {
         if (cancelled) return;
         clearInterval(interval);
