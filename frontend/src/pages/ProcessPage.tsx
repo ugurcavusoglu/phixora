@@ -49,27 +49,15 @@ export default function ProcessPage() {
     };
 
     if (isDemo) {
-      if (demoOriginalUrl) {
-        // Sample image path — use pre-baked demo result
-        const sample = DEMO_SAMPLES.find((s) => s.original === demoOriginalUrl);
-        const resultUrl = sample?.results[tool];
-        if (!resultUrl) {
-          clearInterval(interval);
-          setError('Demo result not available.');
-          return () => clearInterval(interval);
-        }
-        const timer = setTimeout(() => finish(resultUrl, 'demo'), 2500);
-        return () => { clearInterval(interval); clearTimeout(timer); };
+      const sample = DEMO_SAMPLES.find((s) => s.original === demoOriginalUrl);
+      const resultUrl = sample?.results[tool];
+      if (!resultUrl) {
+        clearInterval(interval);
+        setError('Demo result not available.');
+        return () => clearInterval(interval);
       }
-      // Guest own-file path — process without saving to history
-      processImage(file!, tool, { scale, intensity, faceEnhance }, { skipHistory: true })
-        .then(({ data }) => finish(data.outputUrl, data.historyId))
-        .catch(() => {
-          if (cancelled) return;
-          clearInterval(interval);
-          setError('Processing failed. Please try again.');
-        });
-      return () => { cancelled = true; clearInterval(interval); };
+      const timer = setTimeout(() => finish(resultUrl, 'demo'), 2500);
+      return () => { clearInterval(interval); clearTimeout(timer); };
     }
 
     processImage(file!, tool, { scale, intensity, faceEnhance })

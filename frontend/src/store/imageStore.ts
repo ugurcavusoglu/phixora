@@ -21,7 +21,6 @@ interface ImageState {
   setFaceEnhance: (v: boolean) => void;
   setResult: (outputUrl: string, historyId: string) => void;
   startDemo: (originalUrl: string) => void;
-  startGuestUpload: (file: File) => void;
   loadHistoryItem: (item: { tool: Tool; inputUrl: string; outputUrl: string; id: string }) => void;
   reset: () => void;
 }
@@ -45,8 +44,6 @@ export const useImageStore = create<ImageState>((set) => ({
   setResult: (outputUrl, historyId) => set({ outputUrl, historyId }),
   startDemo: (originalUrl) =>
     set({ isDemo: true, demoOriginalUrl: originalUrl, file: null, tool: null, outputUrl: null, historyId: null, viewBeforeUrl: null }),
-  startGuestUpload: (file) =>
-    set({ file, isDemo: true, demoOriginalUrl: null, tool: null, outputUrl: null, historyId: null, viewBeforeUrl: null }),
   loadHistoryItem: (item) =>
     set({
       tool: item.tool,
