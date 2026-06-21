@@ -97,9 +97,9 @@ export default function Navbar() {
           </button>
           <Link
             to="/pricing"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-accent/30 bg-accent/10 text-accent text-sm font-medium hover:bg-accent/20 transition-all duration-200"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gold/30 bg-gold/10 text-gold text-sm font-medium hover:bg-gold/20 transition-all duration-200"
           >
-            💎 <span>{user.gems}</span>
+            ✦ <span>{user.gems}</span>
           </Link>
           <Link
             to="/profile"

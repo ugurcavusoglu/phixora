@@ -24,7 +24,7 @@ const FAQ = [
   },
   {
     q: 'How does pricing work?',
-    a: 'phiXora uses a gem-based system. Each AI tool costs a few gems (3–5 per use). You can purchase gem packages starting at $1.99 for 50 gems. You can also earn free gems by inviting friends — 10 gems per referral, up to 100 gems total.',
+    a: 'phiXora uses a credit system. Each AI tool costs a few credits (3–5 per use). You can purchase credit packages starting at $1.99 for 50 credits. You can also earn free credits by inviting friends — 10 credits per referral, up to 100 credits total.',
   },
 ];
 

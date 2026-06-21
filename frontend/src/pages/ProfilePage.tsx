@@ -29,20 +29,20 @@ export default function ProfilePage() {
             <p className="text-muted text-sm">{user?.email}</p>
           </div>
 
-          <div className="p-4 rounded-xl border border-accent/30 bg-accent/10 mb-4 text-center">
-            <p className="text-accent text-2xl font-bold">💎 {user?.gems ?? 0}</p>
-            <p className="text-muted text-xs mt-1">gems available</p>
+          <div className="p-4 rounded-xl border border-gold/30 bg-gold/10 mb-4 text-center">
+            <p className="text-gold text-2xl font-bold">✦ {user?.gems ?? 0}</p>
+            <p className="text-muted text-xs mt-1">credits available</p>
             <button
               onClick={() => navigate('/pricing')}
-              className="mt-2 text-xs text-accent hover:underline font-medium"
+              className="mt-2 text-xs text-gold hover:underline font-medium"
             >
-              Buy more gems →
+              Buy more credits →
             </button>
           </div>
 
           <div className="p-4 rounded-xl border border-border bg-bg mb-4">
-            <p className="text-xs font-bold tracking-widest text-subtle uppercase mb-2">Invite Friends — Earn Gems</p>
-            <p className="text-muted text-xs mb-3">Share your link. Get 10 💎 per friend who signs up (max 100).</p>
+            <p className="text-xs font-bold tracking-widest text-subtle uppercase mb-2">Invite Friends — Earn Credits</p>
+            <p className="text-muted text-xs mb-3">Share your link. Get 10 ✦ per friend who signs up (max 100).</p>
             <button
               onClick={copyReferral}
               className="w-full py-2 rounded-lg border border-border bg-surface text-text hover:border-accent text-xs font-medium transition-all duration-200"

@@ -77,7 +77,7 @@ export default function ProcessPage() {
         if (cancelled) return;
         clearInterval(interval);
         if (err?.response?.status === 403) {
-          setError('Not enough gems. Purchase more to continue.');
+          setError('Not enough credits. Purchase more to continue.');
         } else {
           setError('Processing failed. Please try again.');
         }
@@ -107,12 +107,12 @@ export default function ProcessPage() {
             <p className="text-text font-semibold mb-2">Processing failed</p>
             <p className="text-red-500 text-sm mb-6">{error}</p>
             <div className="flex gap-3 justify-center flex-wrap">
-              {error.includes('gems') ? (
+              {error.includes('credits') ? (
                 <button
                   onClick={() => navigate('/pricing')}
                   className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent-dk text-white text-sm font-medium transition-all duration-200 shadow-sm"
                 >
-                  Buy Gems
+                  Buy Credits
                 </button>
               ) : (
                 <>
