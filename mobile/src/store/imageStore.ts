@@ -23,6 +23,7 @@ interface ImageState {
   setIntensity: (v: 'low' | 'medium' | 'high') => void;
   setFaceEnhance: (v: boolean) => void;
   setResult: (outputUrl: string) => void;
+  setDemoResult: (outputUrl: string, beforeUrl: string) => void;
   startDemo: (sample: DemoSample) => void;
   loadHistoryItem: (item: { tool: Tool; inputUrl: string; outputUrl: string }) => void;
   reset: () => void;
@@ -48,6 +49,7 @@ export const useImageStore = create<ImageState>((set) => ({
   setIntensity: (intensity) => set({ intensity }),
   setFaceEnhance: (faceEnhance) => set({ faceEnhance }),
   setResult: (outputUrl) => set({ outputUrl: absolute(outputUrl) }),
+  setDemoResult: (outputUrl: string, beforeUrl: string) => set({ outputUrl, beforeUrl }),
   startDemo: (sample) => set({ isDemo: true, demoSample: sample, uri: null, tool: null, outputUrl: null, beforeUrl: null }),
   loadHistoryItem: (item) =>
     set({

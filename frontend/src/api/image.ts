@@ -1,4 +1,4 @@
-import { addToHistory } from './mockHistory';
+import api from './client';
 
 export type Tool = 'super-resolution' | 'remove-noise' | 'remove-background';
 
@@ -8,16 +8,12 @@ export interface ProcessOptions {
   faceEnhance?: boolean;
 }
 
-// Frontend prototype mock: returns the original image as output.
-export const processImage = (
-  file: File,
-  tool: Tool,
-  _options: ProcessOptions = {},
-) =>
-  new Promise<{ data: { historyId: string; outputUrl: string } }>((resolve) => {
-    const inputUrl = URL.createObjectURL(file);
-    const outputUrl = URL.createObjectURL(file);
-    const historyId = crypto.randomUUID();
-    addToHistory({ id: historyId, tool, inputUrl, outputUrl, createdAt: new Date().toISOString() });
-    setTimeout(() => resolve({ data: { historyId, outputUrl } }), 2500);
-  });
+export const processImage = (file: File, tool: Tool, options: ProcessOptions = {}) => {
+  const form = new FormData();
+  form.append('file', file);
+  form.append('tool', tool);
+  if (options.scale) form.append('scale', String(options.scale));
+  if (options.intensity) form.append('intensity', options.intensity);
+  if (options.faceEnhance) form.append('faceEnhance', 'true');
+  return api.post<{ historyId: string; outputUrl: string }>('/image/process', form);
+};

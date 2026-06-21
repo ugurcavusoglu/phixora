@@ -17,7 +17,7 @@ const LABELS: Record<string, string> = {
 };
 
 export default function ProcessScreen({ navigation }: Props) {
-  const { uri, tool, scale, intensity, faceEnhance, isDemo, demoSample, setResult } = useImageStore();
+  const { uri, tool, scale, intensity, faceEnhance, isDemo, demoSample, setResult, setDemoResult } = useImageStore();
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
 
@@ -49,10 +49,16 @@ export default function ProcessScreen({ navigation }: Props) {
         setError('Demo result not available for this tool.');
         return () => clearInterval(interval);
       }
-      // resultSource is a require()'d asset — resolve its URI via Image.resolveAssetSource
-      const { Image } = require('react-native');
-      const resolved = Image.resolveAssetSource(resultSource);
-      const timer = setTimeout(() => finish(resolved.uri), 2500);
+      const { Image: RNImage } = require('react-native');
+      const resolvedResult = RNImage.resolveAssetSource(resultSource);
+      const resolvedBefore = RNImage.resolveAssetSource(demoSample.original);
+      const timer = setTimeout(() => {
+        if (cancelled) return;
+        clearInterval(interval);
+        setProgress(100);
+        setDemoResult(resolvedResult.uri, resolvedBefore.uri);
+        setTimeout(() => navigation.replace('Result'), 500);
+      }, 2500);
       return () => { cancelled = true; clearInterval(interval); clearTimeout(timer); };
     }
 

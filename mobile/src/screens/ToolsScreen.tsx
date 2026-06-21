@@ -18,19 +18,21 @@ const TOOLS: { id: Tool; label: string; icon: string; desc: string }[] = [
 ];
 
 export default function ToolsScreen({ navigation }: Props) {
-  const { uri, tool, scale, setTool, setScale } = useImageStore();
+  const { uri, tool, scale, isDemo, demoSample, setTool, setScale } = useImageStore();
 
   useEffect(() => {
-    if (!uri) navigation.replace('Upload');
-  }, [uri]);
+    if (!uri && !isDemo) navigation.replace('Upload');
+  }, [uri, isDemo]);
 
-  if (!uri) return null;
+  if (!uri && !isDemo) return null;
+
+  const previewSource = isDemo && demoSample ? demoSample.original : { uri: uri! };
 
   return (
     <SafeAreaView style={styles.safe}>
       <ScreenHeader title="Tools" onHistory={() => navigation.navigate('History')} />
       <ScrollView contentContainerStyle={styles.content}>
-        <Image source={{ uri }} style={styles.preview} resizeMode="contain" />
+        <Image source={previewSource} style={styles.preview} resizeMode="contain" />
 
         <Text style={styles.section}>Choose a Tool</Text>
         {TOOLS.map((t) => (
