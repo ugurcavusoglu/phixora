@@ -45,10 +45,10 @@ export default function WelcomePage() {
             AI-Powered Image Enhancement
           </div> */}
           <h1 className="text-5xl md:text-7xl font-black tracking-tight text-text mb-6 leading-tight">
-            IMAGE EDITING
+            ONE CLICK AWAY
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-sky">
-              WITH EASY USAGE
+              FROM PERFECT
             </span>
           </h1>
           <p className="text-muted text-lg mb-10 max-w-xl mx-auto">
@@ -95,7 +95,7 @@ export default function WelcomePage() {
       <section id="results" className="py-24 px-10 bg-bg">
         <div className="max-w-[1600px] mx-auto">
           <p className="text-xs font-bold tracking-widest text-accent uppercase mb-3 text-center">RESULTS</p>
-          <h2 className="text-3xl font-bold text-text text-center mb-14">What you can do with phiXora</h2>
+          <h2 className="text-3xl font-bold text-text text-center mb-14">What phiXora can do</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {tools.map((t) => (
               <div
@@ -118,9 +118,8 @@ export default function WelcomePage() {
       </section>
 
       {/* Footer */}
-      <footer id="contact" className="border-t border-border bg-surface py-8 px-6 flex items-center justify-between text-muted text-sm">
-        <span><span className="text-accent">◇</span> phiXora</span>
-        <span>© phiXora</span>
+      <footer id="contact" className="border-t border-border bg-surface py-8 px-6 flex items-center justify-end text-muted text-sm">
+        <span>© 2026 phiXora</span>
       </footer>
     </div>
   );

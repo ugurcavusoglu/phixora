@@ -186,9 +186,8 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-border bg-surface py-8 px-6 flex items-center justify-between text-muted text-sm">
-        <span><span className="text-accent">◇</span> phiXora</span>
-        <span>© phiXora</span>
+      <footer className="border-t border-border bg-surface py-8 px-6 flex items-center justify-end text-muted text-sm">
+        <span>© 2026 phiXora</span>
       </footer>
     </div>
   );

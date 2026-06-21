@@ -29,8 +29,8 @@ export default function WelcomeScreen({ navigation }: Props) {
             <Text style={styles.badgeText}>AI-Powered Image Enhancement</Text>
           </View>
           <Text style={styles.title}>
-            All the best tools{'\n'}
-            <Text style={styles.titleAccent}>with easy usage</Text>
+            One click away{'\n'}
+            <Text style={styles.titleAccent}>from perfect</Text>
           </Text>
           <Text style={styles.subtitle}>
             Professional-grade AI image editing in your pocket. No expertise required.

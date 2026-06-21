@@ -16,8 +16,18 @@ export default function SignupPage() {
   const { setToken, fetchMe } = useAuthStore();
   const navigate = useNavigate();
 
+  const passwordErrors = password.length > 0 ? [
+    password.length < 6 && 'At least 6 characters',
+    !/[A-Z]/.test(password) && 'One uppercase letter',
+    !/[0-9]/.test(password) && 'One number',
+  ].filter(Boolean) as string[] : [];
+
+  const isPasswordStrong = password.length > 0 && passwordErrors.length === 0;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (name.trim().length < 2) { setError('Name must be at least 2 characters.'); return; }
+    if (passwordErrors.length > 0) { setError('Password does not meet requirements.'); return; }
     if (password !== confirm) { setError('Passwords do not match.'); return; }
     setError('');
     setLoading(true);
@@ -57,7 +67,36 @@ export default function SignupPage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-muted mb-1">Password *</label>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" required className={`${baseInput} border-border focus:border-accent focus:ring-accent/10`} />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••" required className={`${baseInput} ${
+                password && !isPasswordStrong
+                  ? 'border-red-300 focus:border-red-400 focus:ring-red-400/10'
+                  : password && isPasswordStrong
+                  ? 'border-green-400 focus:border-green-500 focus:ring-green-400/10'
+                  : 'border-border focus:border-accent focus:ring-accent/10'
+              }`} />
+              {password.length > 0 && (
+                <div className="mt-2 space-y-1">
+                  <div className="flex gap-1">
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className={`h-1 flex-1 rounded-full transition-colors ${
+                        passwordErrors.length === 0 ? 'bg-green-400' :
+                        passwordErrors.length <= 1 && i <= 2 ? 'bg-gold' :
+                        i === 1 ? 'bg-red-400' : 'bg-border'
+                      }`} />
+                    ))}
+                  </div>
+                  <div className="flex flex-wrap gap-x-3 gap-y-0.5">
+                    {(['At least 6 characters', 'One uppercase letter', 'One number'] as const).map((rule) => {
+                      const passed = !passwordErrors.includes(rule);
+                      return (
+                        <span key={rule} className={`text-[10px] ${passed ? 'text-green-500' : 'text-subtle'}`}>
+                          {passed ? '✓' : '○'} {rule}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-muted mb-1">Confirm Password *</label>
