@@ -112,7 +112,7 @@ export default function UploadPage() {
                 <span className="font-medium flex-1">{t.label}</span>
                 <span className="relative group/info">
                   <span className="w-4 h-4 rounded-full border border-current flex items-center justify-center text-[9px] opacity-50 hover:opacity-100 cursor-help transition-opacity">i</span>
-                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 p-2.5 rounded-lg bg-surface border border-border text-[11px] text-text leading-relaxed shadow-lg opacity-0 pointer-events-none group-hover/info:opacity-100 group-hover/info:pointer-events-auto transition-opacity duration-200 z-50">
+                  <span className="absolute top-full right-0 mt-2 w-56 p-3 rounded-lg bg-surface border border-border text-[11px] text-text leading-relaxed shadow-lg opacity-0 pointer-events-none group-hover/info:opacity-100 group-hover/info:pointer-events-auto transition-opacity duration-200 z-50">
                     {t.info}
                   </span>
                 </span>
