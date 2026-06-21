@@ -21,7 +21,7 @@ export default function CheckoutPage() {
     ? `$${(pkg.monthly * 12 * (1 - ANNUAL_DISCOUNT)).toFixed(2)}/yr`
     : `$${pkg.monthly.toFixed(2)}/mo`;
   const navigate = useNavigate();
-  const { setGems } = useAuthStore();
+  const { setGems, fetchMe } = useAuthStore();
 
   const [card, setCard] = useState({ number: '', expiry: '', cvv: '', name: '' });
   const [loading, setLoading] = useState(false);
@@ -34,9 +34,18 @@ export default function CheckoutPage() {
     return digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
   };
 
+  const expiryValid = (() => {
+    if (card.expiry.length !== 5) return false;
+    const [mm, yy] = card.expiry.split('/').map(Number);
+    if (!mm || !yy || mm < 1 || mm > 12) return false;
+    const now = new Date();
+    const expDate = new Date(2000 + yy, mm);
+    return expDate > now;
+  })();
+
   const isValid = card.number.replace(/\s/g, '').length === 16 &&
-    card.expiry.length === 5 &&
-    card.cvv.length >= 3 &&
+    expiryValid &&
+    card.cvv.length === 3 &&
     card.name.length > 0;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -47,6 +56,7 @@ export default function CheckoutPage() {
     try {
       const { data } = await purchaseGems(packageId as any, billing);
       setGems(data.gems);
+      await fetchMe();
       setSuccess(true);
     } catch {
       setError('Payment failed. Please try again.');
@@ -121,7 +131,7 @@ export default function CheckoutPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-muted mb-1">CVV *</label>
-                <input value={card.cvv} onChange={(e) => setCard({ ...card, cvv: e.target.value.replace(/\D/g, '').slice(0, 4) })} placeholder="123" required className={inputClass} />
+                <input value={card.cvv} onChange={(e) => setCard({ ...card, cvv: e.target.value.replace(/\D/g, '').slice(0, 3) })} placeholder="123" required className={inputClass} />
               </div>
             </div>
 
