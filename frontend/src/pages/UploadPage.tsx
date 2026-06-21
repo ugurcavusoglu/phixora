@@ -271,7 +271,7 @@ export default function UploadPage() {
       )}
 
       {/* Main area */}
-      <main className="flex-1 flex flex-col items-center justify-center p-8 gap-4">
+      <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-8 gap-4">
         {imagePreview ? (
           <>
             <img
@@ -294,7 +294,7 @@ export default function UploadPage() {
               onDrop={onDrop}
               onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
               onDragLeave={() => setDragging(false)}
-              className={`w-full max-w-lg border-2 border-dashed rounded-2xl p-12 flex flex-col items-center justify-center gap-4 transition-all duration-200 cursor-pointer ${
+              className={`w-full max-w-lg border-2 border-dashed rounded-2xl p-6 md:p-12 flex flex-col items-center justify-center gap-4 transition-all duration-200 cursor-pointer ${
                 dragging ? 'border-accent bg-accent/15' : 'border-border hover:border-accent/50 bg-surface'
               }`}
             >

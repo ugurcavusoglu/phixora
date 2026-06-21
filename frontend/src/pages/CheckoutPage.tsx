@@ -114,7 +114,7 @@ export default function CheckoutPage() {
               <label className="block text-sm font-medium text-muted mb-1">Card Number *</label>
               <input value={card.number} onChange={(e) => setCard({ ...card, number: formatCardNumber(e.target.value) })} placeholder="4242 4242 4242 4242" required className={inputClass} />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-muted mb-1">Expiry *</label>
                 <input value={card.expiry} onChange={(e) => setCard({ ...card, expiry: formatExpiry(e.target.value) })} placeholder="MM/YY" required className={inputClass} />

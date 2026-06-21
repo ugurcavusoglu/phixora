@@ -109,7 +109,7 @@ export default function PricingPage() {
       <section className="relative flex flex-col items-center justify-center pt-32 pb-8 px-6 text-center overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'var(--th-hero-grad)' }} />
         <div className="relative z-10 max-w-2xl">
-          <h1 className="text-5xl font-black text-text mb-4">
+          <h1 className="text-3xl sm:text-5xl font-black text-text mb-4">
             Get <span className="text-gold">Credits</span>
           </h1>
           <p className="text-muted text-lg">Each AI tool costs a few credits. Pick a package and start editing.</p>
@@ -164,7 +164,7 @@ export default function PricingPage() {
                   </div>
                 )}
 
-                <div className="p-7 flex flex-col flex-1">
+                <div className="p-5 md:p-7 flex flex-col flex-1">
                   <h3 className="text-xl font-black text-text tracking-wide">{pkg.name}</h3>
                   <p className="text-subtle text-sm mt-1 mb-5">{pkg.desc}</p>
 

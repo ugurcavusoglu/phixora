@@ -20,7 +20,7 @@ export default function FeaturesPage() {
       <section className="relative flex flex-col items-center justify-center pt-32 pb-16 px-6 text-center overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'var(--th-hero-grad)' }} />
         <div className="relative z-10 max-w-3xl">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-text mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-text mb-6 leading-tight">
             Powerful AI
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-sky">

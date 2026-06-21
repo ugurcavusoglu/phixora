@@ -38,7 +38,7 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="min-h-screen px-6 py-24" style={{ background: 'var(--th-hero-grad)' }}>
+    <div className="min-h-screen px-4 md:px-6 py-20 md:py-24" style={{ background: 'var(--th-hero-grad)' }}>
       <div className="max-w-4xl mx-auto">
 
         {/* Profile header */}
@@ -51,7 +51,7 @@ export default function ProfilePage() {
               <h1 className="text-2xl font-bold text-text">{user?.name}</h1>
               <p className="text-muted text-sm">{user?.email}</p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3 mt-4 sm:mt-0">
               <button
                 onClick={() => navigate('/history')}
                 className="px-5 py-2.5 rounded-lg border border-border bg-bg text-text hover:border-accent hover:bg-surface transition-all duration-200 text-sm"

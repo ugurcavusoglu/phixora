@@ -44,7 +44,7 @@ export default function WelcomePage() {
             <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
             AI-Powered Image Enhancement
           </div> */}
-          <h1 className="text-5xl md:text-7xl font-black tracking-tight text-text mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-7xl font-black tracking-tight text-text mb-6 leading-tight">
             ONE CLICK AWAY
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-sky">
@@ -54,7 +54,7 @@ export default function WelcomePage() {
           <p className="text-muted text-lg mb-10 max-w-xl mx-auto">
             AI image editing for everyone. No expertise required.
           </p>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/signup"
               className="px-8 py-3 rounded-xl bg-accent hover:bg-accent-dk text-white font-semibold transition-all duration-200" style={{ boxShadow: '0 4px 16px var(--th-card-glow)' }}
@@ -92,7 +92,7 @@ export default function WelcomePage() {
       </section>
 
       {/* Results */}
-      <section id="results" className="py-24 px-10 bg-bg">
+      <section id="results" className="py-24 px-4 md:px-10 bg-bg">
         <div className="max-w-[1600px] mx-auto">
           <p className="text-xs font-bold tracking-widest text-accent uppercase mb-3 text-center">RESULTS</p>
           <h2 className="text-3xl font-bold text-text text-center mb-14">What phiXora can do</h2>

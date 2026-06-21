@@ -59,7 +59,7 @@ export default function ContactPage() {
       <section className="relative flex flex-col items-center justify-center pt-32 pb-16 px-6 text-center overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'var(--th-hero-grad)' }} />
         <div className="relative z-10 max-w-2xl">
-          <h1 className="text-5xl font-black text-text mb-4">Contact Us</h1>
+          <h1 className="text-3xl sm:text-5xl font-black text-text mb-4">Contact Us</h1>
           <p className="text-muted text-lg">Have a question or feedback? We'd love to hear from you.</p>
         </div>
       </section>
@@ -93,7 +93,7 @@ export default function ContactPage() {
                     Something went wrong. Please try again.
                   </div>
                 )}
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-muted mb-1">Name *</label>
                     <input name="name" value={form.name} onChange={handleChange} required placeholder="Your name" className={inputClass} />

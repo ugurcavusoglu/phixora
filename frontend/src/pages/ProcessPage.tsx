@@ -109,7 +109,7 @@ export default function ProcessPage() {
     <div className="min-h-screen flex flex-col md:flex-row bg-bg">
       <Sidebar active="tools" activeTool={tool} />
 
-      <main className="flex-1 flex flex-col items-center justify-center gap-6 px-8">
+      <main className="flex-1 flex flex-col items-center justify-center gap-6 px-4 md:px-8">
         {error ? (
           <div className="text-center max-w-sm">
             <div className="w-12 h-12 rounded-full flex items-center justify-center text-xl mx-auto mb-4" style={{ backgroundColor: 'var(--th-error-bg)', borderWidth: '1px', borderColor: 'var(--th-error-border)', color: 'var(--th-error-text)' }}>!</div>

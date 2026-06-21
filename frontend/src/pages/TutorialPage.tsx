@@ -48,7 +48,7 @@ export default function TutorialPage() {
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'var(--th-hero-grad)' }} />
         <div className="absolute top-1/3 right-1/3 w-[400px] h-[300px] bg-sky/8 rounded-full blur-[140px] pointer-events-none" />
         <div className="relative z-10 max-w-3xl">
-          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-text mb-6 leading-tight">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-text mb-6 leading-tight">
             How to Use
             <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-sky">
@@ -115,7 +115,7 @@ export default function TutorialPage() {
         {/* CTA */}
         <div className="max-w-2xl mx-auto mt-12 text-center">
           <p className="text-muted mb-6">Ready to give it a try?</p>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/signup"
               className="px-8 py-3 rounded-xl bg-gradient-to-r from-accent to-sky text-white font-semibold hover:opacity-90 transition-opacity shadow-sm"
