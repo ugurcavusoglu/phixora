@@ -43,7 +43,7 @@ export default function HistoryPage() {
     new Date(s).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="min-h-screen flex bg-bg">
+    <div className="min-h-screen flex flex-col md:flex-row bg-bg">
 
       {/* Delete confirmation modal */}
       {confirmDeleteId && (
@@ -74,7 +74,7 @@ export default function HistoryPage() {
       )}
 
       {/* Sidebar */}
-      <aside className="w-64 shrink-0 border-r border-border bg-surface p-4 flex flex-col gap-1 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+      <aside className="w-full md:w-64 shrink-0 border-b md:border-b-0 md:border-r border-border bg-surface p-4 flex flex-col gap-1 md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:overflow-y-auto">
         <button
           onClick={() => navigate('/upload')}
           className="flex items-center gap-2 px-3 py-2 rounded-lg text-muted hover:text-text hover:bg-bg text-base transition-colors duration-200"

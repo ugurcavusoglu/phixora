@@ -43,7 +43,7 @@ export default function ProfilePage() {
 
         {/* Profile header */}
         <div className="p-8 rounded-2xl border border-border bg-surface mb-6" style={{ boxShadow: '0 4px 24px var(--th-card-glow)' }}>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-col sm:flex-row items-center gap-6">
             <div className="w-20 h-20 rounded-full bg-accent/15 border-2 border-accent/20 flex items-center justify-center text-3xl text-accent font-bold shrink-0">
               {user?.name?.[0]?.toUpperCase() ?? '?'}
             </div>
@@ -109,7 +109,7 @@ export default function ProfilePage() {
         </div>
 
         {/* Stats row */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           {statCards.map((s) => (
             <div key={s.label} className="p-5 rounded-xl border border-border bg-surface text-center" style={{ boxShadow: '0 2px 12px var(--th-card-glow)' }}>
               <p className="text-accent text-xl mb-1">{s.icon}</p>

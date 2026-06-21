@@ -79,10 +79,10 @@ export default function UploadPage() {
   const applyLabel = tool ? `Apply ${TOOLS.find((t) => t.id === tool)?.label}` : 'Select a Tool';
 
   return (
-    <div className="min-h-screen flex bg-bg">
+    <div className="min-h-screen flex flex-col md:flex-row bg-bg">
 
       {/* Sidebar */}
-      <aside className="w-64 shrink-0 border-r border-border bg-surface p-4 flex flex-col gap-1 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+      <aside className="w-full md:w-64 shrink-0 border-b md:border-b-0 md:border-r border-border bg-surface p-4 flex flex-col gap-1 md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:overflow-y-auto">
         <button
           className="flex items-center gap-2 px-3 py-2 rounded-lg text-accent bg-accent/15 text-base font-medium"
         >

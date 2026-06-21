@@ -279,7 +279,7 @@ export default function PricingPage() {
       <section className="pb-24 px-6">
         <div className="max-w-2xl mx-auto">
           <h3 className="text-lg font-bold text-text text-center mb-6">Credit Costs per Tool</h3>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {TOOL_COSTS.map((g) => (
               <div key={g.tool} className="p-5 rounded-xl border border-border bg-surface text-center">
                 <div className="text-2xl mb-2 text-accent">{g.icon}</div>

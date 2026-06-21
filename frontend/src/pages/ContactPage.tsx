@@ -65,7 +65,7 @@ export default function ContactPage() {
       </section>
 
       <section className="py-8 px-6 pb-24">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
 
           {/* Contact form */}
           <div className="p-8 rounded-2xl border border-accent/20 bg-surface" style={{ boxShadow: '0 4px 24px var(--th-card-glow)' }}>

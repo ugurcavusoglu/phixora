@@ -106,7 +106,7 @@ export default function ProcessPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-bg">
+    <div className="min-h-screen flex flex-col md:flex-row bg-bg">
       <Sidebar active="tools" activeTool={tool} />
 
       <main className="flex-1 flex flex-col items-center justify-center gap-6 px-8">

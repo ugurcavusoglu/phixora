@@ -66,7 +66,7 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop centre links */}
-        <div className="absolute left-1/2 -translate-x-1/2 hidden lg:flex items-center gap-8">
+        <div className="absolute left-1/2 -translate-x-1/2 hidden xl:flex items-center gap-8">
           {user && <NavLink to="/upload" active={toolsActive}>Tools</NavLink>}
           <NavLink to="/features" active={pathname === '/features'}>Features</NavLink>
           <NavLink to="/tutorial" active={pathname === '/tutorial'}>Tutorial</NavLink>
@@ -76,7 +76,7 @@ export default function Navbar() {
         </div>
 
         {/* Desktop right actions */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden xl:flex items-center gap-3">
           <button
             onClick={toggleTheme}
             title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -119,7 +119,7 @@ export default function Navbar() {
         </div>
 
         {/* Mobile: hamburger + essential buttons */}
-        <div className="flex md:hidden items-center gap-2">
+        <div className="flex xl:hidden items-center gap-2">
           <button onClick={toggleTheme} className="w-8 h-8 rounded-full border-2 border-border bg-bg text-muted flex items-center justify-center">
             {theme === 'dark' ? '☀' : '☾'}
           </button>

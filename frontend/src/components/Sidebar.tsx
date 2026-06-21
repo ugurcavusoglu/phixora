@@ -30,7 +30,7 @@ export default function Sidebar({ activeTool, active = 'tools' }: SidebarProps) 
   );
 
   return (
-    <aside className="w-64 shrink-0 border-r border-border bg-surface p-4 flex flex-col gap-1 sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto">
+    <aside className="w-full md:w-64 shrink-0 border-b md:border-b-0 md:border-r border-border bg-surface p-4 flex flex-col gap-1 md:sticky md:top-16 md:h-[calc(100vh-4rem)] md:overflow-y-auto">
       {tab('✦ Tools', active === 'tools', () => navigate(isDemo ? '/demo' : '/upload'))}
       {isDemo
         ? tab('↗ Sign Up', false, () => navigate('/signup'))
