@@ -79,6 +79,8 @@ export default function ProcessPage() {
         clearInterval(interval);
         if (err?.response?.status === 403) {
           setError('Not enough credits. Purchase more to continue.');
+        } else if (err?.response?.status === 429) {
+          setError('The AI service is busy right now. Please wait a moment and try again.');
         } else {
           setError('Processing failed. Please try again.');
         }
@@ -118,7 +120,7 @@ export default function ProcessPage() {
               ) : (
                 <>
                   <button
-                    onClick={() => navigate('/upload')}
+                    onClick={() => window.location.reload()}
                     className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent-dk text-white text-sm font-medium transition-all duration-200 shadow-sm"
                   >
                     Try Again

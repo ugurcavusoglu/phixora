@@ -121,38 +121,50 @@ export class ImageService {
     inputPath: string,
     _options: ProcessOptions,
   ): Promise<string> {
-    const imageData = await this.prepareInput(inputPath);
+    const imageBuffer = await this.prepareInput(inputPath);
+    const ext = inputPath.split('.').pop()?.toLowerCase() || 'png';
+    const mime = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : ext === 'webp' ? 'image/webp' : 'image/png';
+    const dataUri = `data:${mime};base64,${imageBuffer.toString('base64')}`;
 
     let model: string;
     let input: Record<string, unknown>;
 
     if (tool === 'remove-background') {
       model = MODELS.removeBg;
-      input = { image: imageData, format: 'png', background_type: 'rgba' };
+      input = { image: dataUri, format: 'png', background_type: 'rgba' };
     } else if (tool === 'remove-noise') {
       model = MODELS.denoise;
-      input = { image: imageData, task_type: 'Image Denoising' };
+      input = { image: dataUri, task_type: 'Image Denoising' };
     } else {
-      // super-resolution
       model = MODELS.upscale;
-      input = { image: imageData, task_type: 'Real-World Image Super-Resolution-Large' };
+      input = { image: dataUri, task_type: 'Real-World Image Super-Resolution-Large' };
     }
 
     let output: unknown;
-    try {
-      output = await this.replicate.run(model as `${string}/${string}`, { input });
-    } catch (err) {
-      console.error(`[AI] ${tool} failed:`, err);
-      const status = (err as any)?.response?.status;
-      if (status === 429) {
-        throw new HttpException(
-          'The AI service is busy right now. Please wait a moment and try again.',
-          HttpStatus.TOO_MANY_REQUESTS,
+    const MAX_RETRIES = 3;
+    for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        output = await this.replicate.run(model as `${string}/${string}`, { input });
+        break;
+      } catch (err) {
+        const status = (err as any)?.response?.status;
+        if (status === 429 && attempt < MAX_RETRIES) {
+          const wait = Number((err as any)?.response?.headers?.get?.('retry-after') || 10) * 1000;
+          console.log(`[AI] Rate limited, retrying in ${wait / 1000}s (attempt ${attempt + 1}/${MAX_RETRIES})`);
+          await new Promise((r) => setTimeout(r, wait));
+          continue;
+        }
+        console.error(`[AI] ${tool} failed:`, err);
+        if (status === 429) {
+          throw new HttpException(
+            'The AI service is busy right now. Please wait a moment and try again.',
+            HttpStatus.TOO_MANY_REQUESTS,
+          );
+        }
+        throw new InternalServerErrorException(
+          `AI provider error: ${(err as Error).message}`,
         );
       }
-      throw new InternalServerErrorException(
-        `AI provider error: ${(err as Error).message}`,
-      );
     }
 
     const url = this.extractUrl(output);

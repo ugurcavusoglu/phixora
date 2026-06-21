@@ -23,6 +23,10 @@ import PricingScreen from './src/screens/PricingScreen';
 import CheckoutScreen from './src/screens/CheckoutScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import ContactScreen from './src/screens/ContactScreen';
+import FeaturesScreen from './src/screens/FeaturesScreen';
+import TutorialScreen from './src/screens/TutorialScreen';
+import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
+import NotFoundScreen from './src/screens/NotFoundScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -63,6 +67,9 @@ export default function App() {
               <Stack.Screen name="Checkout" component={CheckoutScreen} />
               <Stack.Screen name="Profile" component={ProfileScreen} />
               <Stack.Screen name="Contact" component={ContactScreen} />
+              <Stack.Screen name="Features" component={FeaturesScreen} />
+              <Stack.Screen name="Tutorial" component={TutorialScreen} />
+              <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
             </>
           ) : isDemo ? (
             <>
@@ -77,6 +84,9 @@ export default function App() {
               <Stack.Screen name="Checkout" component={CheckoutScreen} />
               <Stack.Screen name="Profile" component={ProfileScreen} />
               <Stack.Screen name="Contact" component={ContactScreen} />
+              <Stack.Screen name="Features" component={FeaturesScreen} />
+              <Stack.Screen name="Tutorial" component={TutorialScreen} />
+              <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
             </>
           ) : (
             <>
@@ -88,6 +98,9 @@ export default function App() {
               <Stack.Screen name="Checkout" component={CheckoutScreen} />
               <Stack.Screen name="Profile" component={ProfileScreen} />
               <Stack.Screen name="Contact" component={ContactScreen} />
+              <Stack.Screen name="Features" component={FeaturesScreen} />
+              <Stack.Screen name="Tutorial" component={TutorialScreen} />
+              <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
             </>
           )}
         </Stack.Navigator>

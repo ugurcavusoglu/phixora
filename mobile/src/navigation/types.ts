@@ -12,4 +12,8 @@ export type RootStackParamList = {
   Checkout: { packageId: string };
   Profile: undefined;
   Contact: undefined;
+  Features: undefined;
+  Tutorial: undefined;
+  ForgotPassword: undefined;
+  NotFound: undefined;
 };

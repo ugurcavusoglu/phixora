@@ -53,6 +53,8 @@ export default function WelcomeScreen({ navigation }: Props) {
           <Button title="Get Started Free" onPress={() => navigation.navigate('Signup')} />
           <Button title="Log In" variant="outline" onPress={() => navigation.navigate('Login')} style={{ marginTop: 12 }} />
           <Button title="Try as Guest" variant="outline" onPress={() => navigation.navigate('Demo')} style={{ marginTop: 12 }} />
+          <Button title="Features" variant="outline" onPress={() => navigation.navigate('Features')} style={{ marginTop: 12 }} />
+          <Button title="Tutorial" variant="outline" onPress={() => navigation.navigate('Tutorial')} style={{ marginTop: 12 }} />
           <Button title="Pricing" variant="outline" onPress={() => navigation.navigate('Pricing')} style={{ marginTop: 12 }} />
         </View>
       </ScrollView>

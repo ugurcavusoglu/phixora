@@ -44,6 +44,10 @@ export default function LoginScreen({ navigation }: Props) {
           <Input label="Email" value={email} onChangeText={setEmail} placeholder="you@example.com" keyboardType="email-address" />
           <Input label="Password" value={password} onChangeText={setPassword} placeholder="••••••" secureTextEntry />
 
+          <Pressable onPress={() => navigation.navigate('ForgotPassword')} style={{ alignItems: 'flex-end', marginTop: 4, marginBottom: 4 }}>
+            <Text style={{ color: colors.muted, fontSize: 12 }}>Forgot Password?</Text>
+          </Pressable>
+
           <Button title="Log In" onPress={handleLogin} loading={loading} style={{ marginTop: 8 }} />
 
           <Pressable onPress={() => navigation.navigate('Signup')} style={styles.linkWrap}>
