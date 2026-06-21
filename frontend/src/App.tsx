@@ -21,6 +21,8 @@ import ProfilePage from './pages/ProfilePage';
 import NotFoundPage from './pages/NotFoundPage';
 import AuthCallbackPage from './pages/AuthCallbackPage';
 import DemoUploadPage from './pages/DemoUploadPage';
+import PricingPage from './pages/PricingPage';
+import CheckoutPage from './pages/CheckoutPage';
 
 export default function App() {
   const { token, fetchMe } = useAuthStore();
@@ -44,6 +46,7 @@ export default function App() {
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/demo" element={<DemoUploadPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
 
           <Route path="/upload" element={<ProtectedRoute><UploadPage /></ProtectedRoute>} />
           <Route path="/tools" element={<ProtectedRoute><ToolsPage /></ProtectedRoute>} />
@@ -51,6 +54,7 @@ export default function App() {
           <Route path="/result" element={<ProtectedRoute><ResultPage /></ProtectedRoute>} />
           <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+          <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
 
           <Route path="*" element={<NotFoundPage />} />
         </Routes>

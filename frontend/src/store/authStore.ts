@@ -1,12 +1,13 @@
 import { create } from 'zustand';
 import { getMe } from '../api/auth';
 
-interface User { id: string; name: string; email: string; }
+interface User { id: string; name: string; email: string; gems: number; referralCode: string; }
 
 interface AuthState {
   user: User | null;
   token: string | null;
   setToken: (token: string) => void;
+  setGems: (gems: number) => void;
   logout: () => void;
   fetchMe: () => Promise<void>;
 }
@@ -19,6 +20,8 @@ export const useAuthStore = create<AuthState>((set) => ({
     localStorage.setItem('token', token);
     set({ token });
   },
+
+  setGems: (gems) => set((s) => s.user ? { user: { ...s.user, gems } } : {}),
 
   logout: () => {
     localStorage.removeItem('token');

@@ -43,7 +43,7 @@ export default function BeforeAfterSlider({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden border border-[#E5E7EB] cursor-col-resize select-none ${className}`}
+      className={`relative overflow-hidden border border-border cursor-col-resize select-none ${className}`}
       style={{ aspectRatio: imageAspect ?? aspectRatio, maxHeight: fitToImage ? '70vh' : undefined }}
       onMouseMove={onMouseMove}
       onMouseDown={(e) => { dragging.current = true; moveTo(e.clientX); }}
@@ -72,7 +72,7 @@ export default function BeforeAfterSlider({
       <img src={beforeUrl} alt="before" className={`absolute inset-0 w-full h-full ${fit} pointer-events-none`} style={{ clipPath: `inset(0 ${100 - sliderX}% 0 0)` }} />
 
       <div className="absolute top-0 bottom-0 w-0.5 bg-white/90 pointer-events-none" style={{ left: `${sliderX}%` }}>
-        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center text-[#4F6BED] text-xs font-bold border border-[#E5E7EB]">
+        <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-white shadow-lg flex items-center justify-center text-accent text-xs font-bold border border-border">
           ◇
         </div>
       </div>
@@ -80,7 +80,7 @@ export default function BeforeAfterSlider({
       <span className="absolute bottom-3 left-3 px-2 py-0.5 rounded text-xs font-bold bg-black/50 text-white pointer-events-none">
         BEFORE
       </span>
-      <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded text-xs font-bold bg-[#4F6BED]/80 text-white pointer-events-none">
+      <span className="absolute bottom-3 right-3 px-2 py-0.5 rounded text-xs font-bold bg-accent/80 text-white pointer-events-none">
         AFTER
       </span>
     </div>

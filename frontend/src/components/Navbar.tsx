@@ -1,5 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import { useThemeStore } from '../store/themeStore';
 
 function NavLink({
   to,
@@ -14,12 +15,12 @@ function NavLink({
     <Link
       to={to}
       className={`relative text-sm pb-0.5 transition-colors duration-200 group ${
-        active ? 'text-[#4F6BED] font-medium' : 'text-[#6B7280] hover:text-[#111827]'
+        active ? 'text-accent font-medium' : 'text-muted hover:text-text'
       }`}
     >
       {children}
       <span
-        className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-[#4F6BED] to-[#38BDF8] transition-all duration-300 ${
+        className={`absolute bottom-0 left-0 h-0.5 bg-gradient-to-r from-accent to-sky transition-all duration-300 ${
           active ? 'w-full' : 'w-0 group-hover:w-full'
         }`}
       />
@@ -29,6 +30,7 @@ function NavLink({
 
 export default function Navbar() {
   const { user, logout } = useAuthStore();
+  const { theme, toggle: toggleTheme } = useThemeStore();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
@@ -58,6 +60,7 @@ export default function Navbar() {
       <NavLink to="/features" active={pathname === '/features'}>Features</NavLink>
       <NavLink to="/tutorial" active={pathname === '/tutorial'}>Tutorial</NavLink>
       <NavLink to="/#results" active={false}>Results</NavLink>
+      <NavLink to="/pricing" active={pathname === '/pricing'}>Pricing</NavLink>
       <NavLink to="/contact" active={pathname === '/contact'}>Contact</NavLink>
     </>
   );
@@ -70,11 +73,11 @@ export default function Navbar() {
   );
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 lg:px-20 py-4 border-b border-[#E5E7EB] bg-white/95 backdrop-blur-md">
+    <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 md:px-12 lg:px-20 py-4 border-b border-border backdrop-blur-md" style={{ backgroundColor: 'var(--th-nav-bg)' }}>
       {/* Logo — goes to /upload when logged in, / when guest */}
       <Link to={user ? '/upload' : '/'} className="flex items-center gap-2 text-xl font-bold">
-        <span className="text-[#4F6BED]">◇</span>
-        <span className="text-[#111827]">phiXora</span>
+        <span className="text-accent">◇</span>
+        <span className="text-text">phiXora</span>
       </Link>
 
       {/* Centre links */}
@@ -85,13 +88,26 @@ export default function Navbar() {
       {/* Right actions */}
       {user ? (
         <div className="flex items-center gap-3">
+          <button
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="w-8 h-8 rounded-full border-2 border-border bg-bg text-muted hover:border-accent hover:text-accent flex items-center justify-center transition-all duration-200"
+          >
+            {theme === 'dark' ? '☀' : '☾'}
+          </button>
+          <Link
+            to="/pricing"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-accent/30 bg-accent/10 text-accent text-sm font-medium hover:bg-accent/20 transition-all duration-200"
+          >
+            💎 <span>{user.gems}</span>
+          </Link>
           <Link
             to="/profile"
             title={user.name}
             className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
               pathname === '/profile'
-                ? 'border-[#4F6BED] bg-[#EEF4FF] text-[#4F6BED]'
-                : 'border-[#E5E7EB] bg-[#F7F9FC] text-[#6B7280] hover:border-[#4F6BED] hover:text-[#4F6BED]'
+                ? 'border-accent bg-accent/15 text-accent'
+                : 'border-border bg-bg text-muted hover:border-accent hover:text-accent'
             }`}
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -108,19 +124,26 @@ export default function Navbar() {
         </div>
       ) : (
         <div className="flex items-center gap-3">
+          <button
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="w-8 h-8 rounded-full border-2 border-border bg-bg text-muted hover:border-accent hover:text-accent flex items-center justify-center transition-all duration-200"
+          >
+            {theme === 'dark' ? '☀' : '☾'}
+          </button>
           <Link
             to="/login"
             className={`text-sm px-4 py-1.5 rounded-lg border transition-all duration-200 ${
               pathname === '/login'
-                ? 'border-[#4F6BED] text-[#4F6BED]'
-                : 'border-[#E5E7EB] text-[#111827] hover:border-[#4F6BED] hover:text-[#4F6BED]'
+                ? 'border-accent text-accent'
+                : 'border-border text-text hover:border-accent hover:text-accent'
             }`}
           >
             Login
           </Link>
           <Link
             to="/signup"
-            className="text-sm px-4 py-1.5 rounded-lg bg-[#4F6BED] hover:bg-[#3F56C6] text-white font-medium transition-all duration-200 shadow-sm"
+            className="text-sm px-4 py-1.5 rounded-lg bg-accent hover:bg-accent-dk text-white font-medium transition-all duration-200 shadow-sm"
           >
             Sign Up
           </Link>

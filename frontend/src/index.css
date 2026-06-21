@@ -1,24 +1,69 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg:        #F7F9FC;
-  --color-surface:   #FFFFFF;
-  --color-border:    #E5E7EB;
-  --color-accent:    #4F6BED;
-  --color-accent-dk: #3F56C6;
-  --color-sky:       #38BDF8;
-  --color-text:      #111827;
-  --color-muted:     #6B7280;
+  --color-bg:        var(--th-bg);
+  --color-surface:   var(--th-surface);
+  --color-border:    var(--th-border);
+  --color-accent:    var(--th-accent);
+  --color-accent-dk: var(--th-accent-dk);
+  --color-sky:       var(--th-sky);
+  --color-text:      var(--th-text);
+  --color-muted:     var(--th-muted);
+  --color-subtle:    var(--th-subtle);
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
+:root {
+  /* Dark (default) */
+  --th-bg:        #0B0D14;
+  --th-surface:   #151823;
+  --th-border:    #262B3D;
+  --th-accent:    #8B5CF6;
+  --th-accent-dk: #A78BFA;
+  --th-sky:       #34D399;
+  --th-text:      #F1F5F9;
+  --th-muted:     #94A3B8;
+  --th-subtle:    #64748B;
+  --th-nav-bg:    rgba(11,13,20,0.92);
+  --th-card-glow: rgba(139,92,246,0.12);
+  --th-hero-grad: radial-gradient(ellipse at top, rgba(139,92,246,0.15) 0%, #0B0D14 65%);
+  --th-input-bg:  #0F1119;
+  --th-error-bg:  rgba(239,68,68,0.12);
+  --th-error-border: rgba(239,68,68,0.35);
+  --th-error-text: #FB7185;
+  --th-scrollbar-track: #151823;
+  --th-scrollbar-thumb: #262B3D;
+}
+
+:root.light {
+  --th-bg:        #F7F9FC;
+  --th-surface:   #FFFFFF;
+  --th-border:    #E5E7EB;
+  --th-accent:    #4F6BED;
+  --th-accent-dk: #3F56C6;
+  --th-sky:       #38BDF8;
+  --th-text:      #111827;
+  --th-muted:     #6B7280;
+  --th-subtle:    #9CA3AF;
+  --th-nav-bg:    rgba(255,255,255,0.95);
+  --th-card-glow: rgba(79,107,237,0.10);
+  --th-hero-grad: radial-gradient(ellipse at top, #E0E7FF 0%, #F7F9FC 65%);
+  --th-input-bg:  #FFFFFF;
+  --th-error-bg:  #FEF2F2;
+  --th-error-border: #FECACA;
+  --th-error-text: #DC2626;
+  --th-scrollbar-track: #F7F9FC;
+  --th-scrollbar-thumb: #A5B4FC;
+}
+
 body {
-  background-color: #F7F9FC;
-  color: #111827;
+  background-color: var(--th-bg);
+  color: var(--th-text);
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   margin: 0;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 * {
@@ -30,5 +75,5 @@ body {
 }
 
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #F7F9FC; }
-::-webkit-scrollbar-thumb { background: #A5B4FC; border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--th-scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--th-scrollbar-thumb); border-radius: 3px; }

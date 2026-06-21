@@ -1,11 +1,13 @@
 import {
   Injectable,
   BadRequestException,
+  ForbiddenException,
   InternalServerErrorException,
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
 import { HistoryService } from '../history/history.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { join, extname } from 'path';
 import { randomUUID } from 'crypto';
 import * as fs from 'fs';
@@ -36,11 +38,20 @@ const MODELS = {
     '851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc',
 } as const;
 
+const GEM_COSTS: Record<Tool, number> = {
+  'super-resolution': 5,
+  'remove-noise': 3,
+  'remove-background': 4,
+};
+
 @Injectable()
 export class ImageService {
   private replicate = new Replicate({ auth: process.env.REPLICATE_API_TOKEN });
 
-  constructor(private history: HistoryService) {}
+  constructor(
+    private history: HistoryService,
+    private prisma: PrismaService,
+  ) {}
 
   async process(
     userId: string,
@@ -49,6 +60,14 @@ export class ImageService {
     options: ProcessOptions = {},
   ) {
     if (!file) throw new BadRequestException('No file uploaded');
+
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { gems: true },
+    });
+    if (!user || user.gems < GEM_COSTS[tool])
+      throw new ForbiddenException('Insufficient gems');
+
     if (!process.env.REPLICATE_API_TOKEN) {
       throw new InternalServerErrorException('REPLICATE_API_TOKEN is not set');
     }
@@ -68,7 +87,13 @@ export class ImageService {
     await this.downloadTo(resultUrl, outputPath);
 
     const record = await this.history.create(userId, tool, inputUrl, outputUrl);
-    return { historyId: record.id, outputUrl };
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { gems: { decrement: GEM_COSTS[tool] } },
+    });
+
+    return { historyId: record.id, outputUrl, remainingGems: user.gems - GEM_COSTS[tool] };
   }
 
   /**

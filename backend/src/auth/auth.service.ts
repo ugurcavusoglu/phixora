@@ -20,6 +20,19 @@ export class AuthService {
       data: { name: dto.name, email: dto.email, password: hash },
     });
 
+    if (dto.referredBy) {
+      const referrer = await this.prisma.user.findUnique({
+        where: { referralCode: dto.referredBy },
+        select: { id: true, referralCount: true },
+      });
+      if (referrer && referrer.referralCount < 10) {
+        await this.prisma.user.update({
+          where: { id: referrer.id },
+          data: { gems: { increment: 10 }, referralCount: { increment: 1 } },
+        });
+      }
+    }
+
     return this.signToken(user.id, user.email);
   }
 
@@ -57,7 +70,7 @@ export class AuthService {
   async getMe(userId: string) {
     return this.prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, name: true, email: true, createdAt: true },
+      select: { id: true, name: true, email: true, gems: true, referralCode: true, referralCount: true, createdAt: true },
     });
   }
 

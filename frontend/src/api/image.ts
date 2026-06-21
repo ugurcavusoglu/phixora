@@ -15,5 +15,5 @@ export const processImage = (file: File, tool: Tool, options: ProcessOptions = {
   if (options.scale) form.append('scale', String(options.scale));
   if (options.intensity) form.append('intensity', options.intensity);
   if (options.faceEnhance) form.append('faceEnhance', 'true');
-  return api.post<{ historyId: string; outputUrl: string }>('/image/process', form);
+  return api.post<{ historyId: string; outputUrl: string; remainingGems?: number }>('/image/process', form);
 };

@@ -47,25 +47,25 @@ const STEPS = [
 
 export default function TutorialPage() {
   return (
-    <div className="min-h-screen bg-[#F7F9FC]">
+    <div className="min-h-screen bg-bg">
 
       {/* Hero */}
       <section className="relative flex flex-col items-center justify-center pt-32 pb-16 px-6 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,#E0E7FF_0%,#F7F9FC_65%)] pointer-events-none" />
-        <div className="absolute top-1/3 right-1/3 w-[400px] h-[300px] bg-[#38BDF8]/8 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'var(--th-hero-grad)' }} />
+        <div className="absolute top-1/3 right-1/3 w-[400px] h-[300px] bg-sky/8 rounded-full blur-[140px] pointer-events-none" />
         <div className="relative z-10 max-w-3xl">
           {/* <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full border border-[#E5E7EB] bg-white text-[#4F6BED] text-sm shadow-sm">
             <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
             Guided Journey · 6 Steps
           </div> */}
-          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-[#111827] mb-6 leading-tight">
+          <h1 className="text-5xl md:text-6xl font-black tracking-tight text-text mb-6 leading-tight">
             How to Use
             <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#4F6BED] to-[#38BDF8]">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent to-sky">
               phiXora
             </span>
           </h1>
-          <p className="text-[#6B7280] text-lg max-w-xl mx-auto">
+          <p className="text-muted text-lg max-w-xl mx-auto">
             Six steps from upload to export.
           </p>
         </div>
@@ -80,7 +80,7 @@ export default function TutorialPage() {
             <div
               className="absolute left-[23px] top-8 bottom-8 w-0.5 pointer-events-none"
               style={{
-                background: 'linear-gradient(to bottom, #4F6BED 0%, #38BDF8 50%, #4F6BED 100%)',
+                background: 'linear-gradient(to bottom, var(--th-accent) 0%, var(--th-sky) 50%, var(--th-accent) 100%)',
               }}
             />
 
@@ -90,35 +90,35 @@ export default function TutorialPage() {
 
                   {/* Figure-ground: numbered circle pops against the line */}
                   <div
-                    className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-black text-white text-sm z-10 shadow-md ring-4 ring-[#F7F9FC]"
+                    className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center font-black text-white text-sm z-10 shadow-md ring-4 ring-bg"
                     style={{
-                      background: 'linear-gradient(135deg, #4F6BED, #38BDF8)',
+                      background: 'linear-gradient(135deg, var(--th-accent), var(--th-sky))',
                     }}
                   >
                     {s.step}
                   </div>
 
                   {/* Common region: each step lives inside its own white card */}
-                  <div className="flex-1 bg-white rounded-2xl border border-[#E5E7EB] p-5 shadow-sm hover:shadow-[0_4px_16px_rgba(79,107,237,0.10)] hover:border-[#4F6BED]/40 hover:-translate-y-0.5 transition-all duration-200 mb-1">
+                  <div className="flex-1 bg-surface rounded-2xl border border-border p-5 shadow-sm hover:border-accent/40 hover:-translate-y-0.5 transition-all duration-200 mb-1">
 
                     {/* Proximity: step label, icon, title and description are tightly grouped */}
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 bg-[#EEF4FF] text-[#4F6BED]">
+                      <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg shrink-0 bg-accent/15 text-accent">
                         {s.icon}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-[12px] font-bold tracking-widest text-[#4F6BED] uppercase">
+                          <span className="text-[12px] font-bold tracking-widest text-accent uppercase">
                             Step {s.step}
                           </span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#EEF4FF] text-[#4F6BED] font-medium">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent font-medium">
                             {s.tag}
                           </span>
                         </div>
-                        <h3 className="text-[#111827] font-semibold leading-tight">{s.title}</h3>
+                        <h3 className="text-text font-semibold leading-tight">{s.title}</h3>
                       </div>
                     </div>
-                    <p className="text-[#6B7280] text-sm leading-relaxed pl-12">{s.desc}</p>
+                    <p className="text-muted text-sm leading-relaxed pl-12">{s.desc}</p>
 
                     {/* Continuity: subtle arrow between steps */}
                     {/* {i < STEPS.length - 1 && (
@@ -135,17 +135,17 @@ export default function TutorialPage() {
 
         {/* CTA */}
         <div className="max-w-2xl mx-auto mt-12 text-center">
-          <p className="text-[#6B7280] mb-6">Ready to give it a try?</p>
+          <p className="text-muted mb-6">Ready to give it a try?</p>
           <div className="flex items-center justify-center gap-4">
             <Link
               to="/signup"
-              className="px-8 py-3 rounded-xl bg-gradient-to-r from-[#4F6BED] to-[#38BDF8] text-white font-semibold hover:opacity-90 transition-opacity shadow-[0_4px_16px_rgba(79,107,237,0.25)]"
+              className="px-8 py-3 rounded-xl bg-gradient-to-r from-accent to-sky text-white font-semibold hover:opacity-90 transition-opacity shadow-sm"
             >
               Create Account
             </Link>
             <Link
               to="/demo"
-              className="px-8 py-3 rounded-xl border border-[#E5E7EB] bg-white text-[#6B7280] hover:text-[#111827] hover:border-[#4F6BED] transition-all duration-200 shadow-sm"
+              className="px-8 py-3 rounded-xl border border-border bg-surface text-muted hover:text-text hover:border-accent transition-all duration-200 shadow-sm"
             >
               Try as Guest
             </Link>
@@ -153,9 +153,9 @@ export default function TutorialPage() {
         </div>
       </section>
 
-      <footer className="border-t border-[#E5E7EB] bg-white py-8 px-6 flex items-center justify-between text-[#6B7280] text-sm">
-        <span><span className="text-[#4F6BED]">◇</span> phiXora</span>
-        <span>CENG318 — Group 10</span>
+      <footer className="border-t border-border bg-surface py-8 px-6 flex items-center justify-between text-muted text-sm">
+        <span><span className="text-accent">◇</span> phiXora</span>
+        <span>© phiXora</span>
       </footer>
     </div>
   );

@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { HistoryModule } from './history/history.module';
 import { ImageModule } from './image/image.module';
 import { ContactModule } from './contact/contact.module';
+import { GemsModule } from './gems/gems.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ContactModule } from './contact/contact.module';
     HistoryModule,
     ImageModule,
     ContactModule,
+    GemsModule,
   ],
 })
 export class AppModule {}

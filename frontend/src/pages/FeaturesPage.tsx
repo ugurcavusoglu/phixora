@@ -1,59 +1,17 @@
 import { Link } from 'react-router-dom';
-import superResolution from "../assets/featuresIcons/superResolution.png";
-import removeNoise from "../assets/featuresIcons/removeNoise.png";
-import removebg from "../assets/featuresIcons/removebg.png";
-import beforeAfter from "../assets/featuresIcons/before-after.png";
-import history from "../assets/featuresIcons/history.png";
-import exporticon from "../assets/featuresIcons/export.png";
 
 const FEATURES = [
-  {
-    icon: superResolution,
-    title: 'Super Resolution',
-    desc: 'Upscale your images without losing detail.',
-    // badge: '4x Upscale',
-    color: '#4F6BED',
-  },
-  {
-    icon: removeNoise,
-    title: 'Remove Noise',
-    desc: 'Clean grain, compression artifacts and sensor noise from any photo.',
-    // badge: 'AI Denoising',
-    color: '#38BDF8',
-  },
-  {
-    icon: removebg,
-    title: 'Remove Background',
-    desc: 'Instantly remove image backgrounds. Exports as transparent PNG.',
-    // badge: 'Auto-detect',
-    color: '#4F6BED',
-  },
-  {
-    icon: beforeAfter,
-    title: 'Before / After Preview',
-    desc: 'Drag the slider to compare your original and enhanced image side by side.',
-    // badge: 'Interactive',
-    color: '#38BDF8',
-  },
-  {
-    icon: history,
-    title: 'History',
-    desc: 'Every processed image is saved to your history. Reopen, re-download, or delete past results anytime.',
-    // badge: 'Auto-save',
-    color: '#4F6BED',
-  },
-  {
-    icon: exporticon,
-    title: 'Fast Export',
-    desc: 'Download your enhanced image instantly in full quality.',
-    // badge: 'Full Quality',
-    color: '#38BDF8',
-  },
+  { icon: '◈', title: 'Super Resolution', desc: 'Upscale your images without losing detail.' },
+  { icon: '✦', title: 'Remove Noise', desc: 'Clean grain, compression artifacts and sensor noise from any photo.' },
+  { icon: '⊙', title: 'Remove Background', desc: 'Instantly remove image backgrounds. Exports as transparent PNG.' },
+  { icon: '⇤⇥', title: 'Before / After Preview', desc: 'Drag the slider to compare your original and enhanced image side by side.' },
+  { icon: '↻', title: 'History', desc: 'Every processed image is saved to your history. Reopen, re-download, or delete past results anytime.' },
+  { icon: '↓', title: 'Fast Export', desc: 'Download your enhanced image instantly in full quality.' },
 ];
 
 export default function FeaturesPage() {
   return (
-    <div className="min-h-screen bg-[#F7F9FC]">
+    <div className="min-h-screen bg-bg">
 
       {/* Hero
       <section className="relative flex flex-col items-center justify-center pt-32 pb-20 px-6 text-center overflow-hidden">
@@ -84,44 +42,23 @@ export default function FeaturesPage() {
       </section> */}
 
       {/* Feature cards */}
-      <section className="py-16 px-6 bg-white">
+      <section className="py-16 px-6 bg-surface">
         <div className="max-w-5xl mx-auto">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {FEATURES.map((f) => (
               <div
                 key={f.title}
-                className="p-6 rounded-2xl border border-[#E5E7EB] bg-white hover:border-[#4F6BED]/50 hover:shadow-[0_4px_20px_rgba(79,107,237,0.10)] hover:-translate-y-0.5 transition-all duration-200"
+                className="p-7 rounded-2xl border border-border bg-surface hover:border-accent/40 hover:-translate-y-1 transition-all duration-200"
+                style={{ boxShadow: '0 2px 12px var(--th-card-glow)' }}
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-                    style={{ backgroundColor: `${f.color}12`, color: f.color }}
-                  >
-                    {typeof f.icon === "string" && f.icon.includes("/assets/") ? (
-                      <img
-                        src={f.icon}
-                        alt={`${f.title} icon`}
-                        className="w-7 h-7 object-contain"
-                      />
-                    ) : (
-                      <span>{f.icon}</span>
-                    )}
-                  </div>
-                  {/* <div
-                    className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl"
-                    style={{ backgroundColor: `${f.color}12`, color: f.color }}
-                  >
-                    {f.icon}
-                  </div> */}
-                  {/* <span className="text-xs px-2.5 py-1 rounded-full font-semibold bg-[#EEF4FF] text-[#4F6BED]">
-                    {f.badge}
-                  </span> */}
+                <div className="w-12 h-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center mb-5 text-xl text-accent-dk">
+                  {f.icon}
                 </div>
-                <h3 className="text-[#111827] font-semibold text-lg mb-2">{f.title}</h3>
-                <p className="text-[#6B7280] text-sm leading-relaxed">{f.desc}</p>
+                <h3 className="text-text font-semibold text-lg mb-2">{f.title}</h3>
+                <p className="text-muted text-sm leading-relaxed">{f.desc}</p>
                 <Link
                   to="/signup"
-                  className="inline-block mt-4 text-sm font-medium text-[#4F6BED] hover:text-[#3F56C6] transition-colors hover:underline"
+                  className="inline-block mt-4 text-sm font-medium text-accent hover:text-accent-dk transition-colors hover:underline"
                 >
                   Try now →
                 </Link>
@@ -153,9 +90,9 @@ export default function FeaturesPage() {
         </div>
       </section> */}
 
-      <footer className="border-t border-[#E5E7EB] bg-white py-8 px-6 flex items-center justify-between text-[#6B7280] text-sm">
-        <span><span className="text-[#4F6BED]">◇</span> phiXora</span>
-        <span>CENG318 — Group 10</span>
+      <footer className="border-t border-border bg-surface py-8 px-6 flex items-center justify-between text-muted text-sm">
+        <span><span className="text-accent">◇</span> phiXora</span>
+        <span>© phiXora</span>
       </footer>
     </div>
   );

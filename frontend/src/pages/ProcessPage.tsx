@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useImageStore } from '../store/imageStore';
+import { useAuthStore } from '../store/authStore';
 import { processImage } from '../api/image';
 import { DEMO_SAMPLES } from '../demo/demoData';
 import Sidebar from '../components/Sidebar';
@@ -11,6 +12,12 @@ const TOOL_LABELS: Record<string, string> = {
   'remove-background': 'Remove Background',
 };
 
+const GEM_COSTS: Record<string, number> = {
+  'super-resolution': 5,
+  'remove-noise': 3,
+  'remove-background': 4,
+};
+
 const TOOL_HINTS: Record<string, string> = {
   'super-resolution': 'Applying Super Resolution. This may take a few seconds.',
   'remove-noise': 'Cleaning up noise — this usually takes a few seconds.',
@@ -19,6 +26,7 @@ const TOOL_HINTS: Record<string, string> = {
 
 export default function ProcessPage() {
   const { file, tool, scale, intensity, faceEnhance, isDemo, demoOriginalUrl, setResult } = useImageStore();
+  const { user, setGems } = useAuthStore();
   const [progress, setProgress] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState('');
@@ -61,11 +69,18 @@ export default function ProcessPage() {
     }
 
     processImage(file!, tool, { scale, intensity, faceEnhance })
-      .then(({ data }) => finish(data.outputUrl, data.historyId))
-      .catch(() => {
+      .then(({ data }) => {
+        if (data.remainingGems !== undefined) setGems(data.remainingGems);
+        finish(data.outputUrl, data.historyId);
+      })
+      .catch((err) => {
         if (cancelled) return;
         clearInterval(interval);
-        setError('Processing failed. Please try again.');
+        if (err?.response?.status === 403) {
+          setError('Not enough gems. Purchase more to continue.');
+        } else {
+          setError('Processing failed. Please try again.');
+        }
       });
 
     return () => { cancelled = true; clearInterval(interval); };
@@ -82,37 +97,46 @@ export default function ProcessPage() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#F7F9FC]">
+    <div className="min-h-screen flex bg-bg">
       <Sidebar active="tools" activeTool={tool} />
 
       <main className="flex-1 flex flex-col items-center justify-center gap-6 px-8">
         {error ? (
           <div className="text-center max-w-sm">
-            <div className="w-12 h-12 rounded-full bg-red-50 border border-red-200 flex items-center justify-center text-red-500 text-xl mx-auto mb-4">!</div>
-            <p className="text-[#111827] font-semibold mb-2">Processing failed</p>
+            <div className="w-12 h-12 rounded-full flex items-center justify-center text-xl mx-auto mb-4" style={{ backgroundColor: 'var(--th-error-bg)', borderWidth: '1px', borderColor: 'var(--th-error-border)', color: 'var(--th-error-text)' }}>!</div>
+            <p className="text-text font-semibold mb-2">Processing failed</p>
             <p className="text-red-500 text-sm mb-6">{error}</p>
-            <div className="flex gap-3 justify-center">
+            <div className="flex gap-3 justify-center flex-wrap">
+              {error.includes('gems') ? (
+                <button
+                  onClick={() => navigate('/pricing')}
+                  className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent-dk text-white text-sm font-medium transition-all duration-200 shadow-sm"
+                >
+                  Buy Gems
+                </button>
+              ) : (
               <button
                 onClick={() => navigate('/tools')}
-                className="px-6 py-2.5 rounded-lg bg-[#4F6BED] hover:bg-[#3F56C6] text-white text-sm font-medium transition-all duration-200 shadow-sm"
+                className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent-dk text-white text-sm font-medium transition-all duration-200 shadow-sm"
               >
                 Try Again
               </button>
               <button
                 onClick={() => navigate('/upload')}
-                className="px-6 py-2.5 rounded-lg border border-[#E5E7EB] bg-white text-[#6B7280] hover:text-[#111827] hover:border-[#4F6BED] text-sm transition-all duration-200"
+                className="px-6 py-2.5 rounded-lg border border-border bg-surface text-muted hover:text-text hover:border-accent text-sm transition-all duration-200"
               >
                 Change Image
               </button>
+              )}
             </div>
           </div>
         ) : (
           <>
-            <p className="text-[#111827] font-semibold text-lg">{toolLabel}</p>
+            <p className="text-text font-semibold text-lg">{toolLabel}</p>
 
             <div className="relative w-36 h-36">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="45" fill="none" stroke="#E5E7EB" strokeWidth="7" />
+                <circle cx="50" cy="50" r="45" fill="none" stroke="var(--th-border)" strokeWidth="7" />
                 <circle
                   cx="50" cy="50" r="45" fill="none"
                   stroke="url(#grad)" strokeWidth="7"
@@ -123,34 +147,34 @@ export default function ProcessPage() {
                 />
                 <defs>
                   <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#4F6BED" />
-                    <stop offset="100%" stopColor="#38BDF8" />
+                    <stop offset="0%" stopColor="var(--th-accent)" />
+                    <stop offset="100%" stopColor="var(--th-sky)" />
                   </linearGradient>
                 </defs>
               </svg>
-              <span className="absolute inset-0 flex items-center justify-center text-[#111827] font-bold text-2xl">
+              <span className="absolute inset-0 flex items-center justify-center text-text font-bold text-2xl">
                 {displayProgress}%
               </span>
             </div>
 
             <div className="text-center space-y-1">
-              <p className="text-[#6B7280] text-sm">
+              <p className="text-muted text-sm">
                 {elapsed > 120 ? 'Still processing, almost done…' : 'Editing… please wait'}
               </p>
               {elapsed > 0 && (
-                <p className="text-[#9CA3AF] text-xs">Elapsed: {formatElapsed(elapsed)}</p>
+                <p className="text-subtle text-xs">Elapsed: {formatElapsed(elapsed)}</p>
               )}
             </div>
 
             {hint && (
-              <div className="max-w-xs text-center px-4 py-3 rounded-xl border border-[#E5E7EB] bg-white shadow-sm">
-                <p className="text-[#6B7280] text-xs leading-relaxed">{hint}</p>
+              <div className="max-w-xs text-center px-4 py-3 rounded-xl border border-border bg-surface shadow-sm">
+                <p className="text-muted text-xs leading-relaxed">{hint}</p>
               </div>
             )}
 
             <button
               onClick={() => navigate('/tools')}
-              className="text-xs text-[#9CA3AF] hover:text-[#6B7280] transition-colors duration-200 underline underline-offset-2"
+              className="text-xs text-subtle hover:text-muted transition-colors duration-200 underline underline-offset-2"
             >
               Cancel
             </button>
