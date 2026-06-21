@@ -7,10 +7,10 @@ import { type Tool } from '../api/image';
 const ACCEPTED = ['image/png', 'image/jpeg', 'image/webp'];
 const MAX_MB = 20;
 
-const TOOLS: { id: Tool; label: string; icon: string; desc: string }[] = [
-  { id: 'super-resolution', label: 'Super Resolution', icon: '◈', desc: 'Upscale your image up to 4x' },
-  { id: 'remove-noise', label: 'Remove Noise', icon: '✦', desc: 'Clean grain and artifacts' },
-  { id: 'remove-background', label: 'Remove Background', icon: '⊙', desc: 'Auto background removal' },
+const TOOLS: { id: Tool; label: string; icon: string; desc: string; info: string }[] = [
+  { id: 'super-resolution', label: 'Super Resolution', icon: '◈', desc: 'Upscale your image up to 4x', info: 'Increases image resolution using AI. Great for enlarging small or low-quality photos without losing detail. Costs 5 credits.' },
+  { id: 'remove-noise', label: 'Remove Noise', icon: '✦', desc: 'Clean grain and artifacts', info: 'Removes grain, sensor noise, and compression artifacts from photos. Ideal for old or low-light images. Costs 3 credits.' },
+  { id: 'remove-background', label: 'Remove Background', icon: '⊙', desc: 'Auto background removal', info: 'Automatically detects and removes the background, exporting a transparent PNG. Perfect for product photos or portraits. Costs 4 credits.' },
 ];
 
 const CLEANUP_LEVELS: { label: string; value: 'low' | 'medium' | 'high' }[] = [
@@ -97,9 +97,15 @@ export default function UploadPage() {
                   : 'text-muted hover:text-text hover:bg-bg'
               }`}
             >
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 w-full">
                 <span className="text-base">{t.icon}</span>
-                <span className="font-medium">{t.label}</span>
+                <span className="font-medium flex-1">{t.label}</span>
+                <span className="relative group/info">
+                  <span className="w-4 h-4 rounded-full border border-current flex items-center justify-center text-[9px] opacity-50 hover:opacity-100 cursor-help transition-opacity">i</span>
+                  <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 p-2.5 rounded-lg bg-surface border border-border text-[11px] text-text leading-relaxed shadow-lg opacity-0 pointer-events-none group-hover/info:opacity-100 group-hover/info:pointer-events-auto transition-opacity duration-200 z-50">
+                    {t.info}
+                  </span>
+                </span>
               </div>
               <span className="text-[10px] opacity-60 mt-1">{t.desc}</span>
             </button>
