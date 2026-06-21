@@ -121,7 +121,18 @@ export default function HistoryPage() {
               style={{ boxShadow: '0 4px 24px var(--th-card-glow)' }}
             />
             <div className="flex flex-col items-center gap-2">
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-wrap justify-center">
+                <button
+                  onClick={() => {
+                    const a = document.createElement('a');
+                    a.href = selected.outputUrl;
+                    a.download = `phixora-${selected.tool}-result.png`;
+                    a.click();
+                  }}
+                  className="px-6 py-2.5 rounded-xl bg-accent hover:bg-accent-dk text-white text-sm font-semibold transition-all duration-200 shadow-sm"
+                >
+                  Export
+                </button>
                 <button
                   onClick={() => {
                     loadHistoryItem({
@@ -132,7 +143,7 @@ export default function HistoryPage() {
                     });
                     navigate('/result');
                   }}
-                  className="px-6 py-2.5 rounded-xl bg-accent hover:bg-accent-dk text-white text-sm font-semibold transition-all duration-200 shadow-sm"
+                  className="px-6 py-2.5 rounded-xl border border-border bg-surface text-text hover:border-accent hover:text-accent text-sm transition-all duration-200"
                 >
                   View Before/After
                 </button>
