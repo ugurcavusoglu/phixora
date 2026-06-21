@@ -10,6 +10,10 @@ import { join, extname } from 'path';
 import { randomUUID } from 'crypto';
 import * as fs from 'fs';
 import Replicate from 'replicate';
+import sharp from 'sharp';
+
+// Cap the longest edge so AI models don't run out of GPU memory on large inputs.
+const MAX_EDGE = 1600;
 
 export type Tool = 'super-resolution' | 'remove-noise' | 'remove-background';
 
@@ -67,13 +71,32 @@ export class ImageService {
     return { historyId: record.id, outputUrl };
   }
 
+  /**
+   * Reads the input file, downscaling it if the longest edge exceeds MAX_EDGE so
+   * the AI models stay within GPU memory. Returns the (possibly resized) bytes.
+   */
+  private async prepareInput(inputPath: string): Promise<Buffer> {
+    try {
+      const meta = await sharp(inputPath).metadata();
+      const longest = Math.max(meta.width ?? 0, meta.height ?? 0);
+      if (longest > MAX_EDGE) {
+        return await sharp(inputPath)
+          .resize({ width: MAX_EDGE, height: MAX_EDGE, fit: 'inside', withoutEnlargement: true })
+          .toBuffer();
+      }
+    } catch {
+      // If sharp can't read it, fall back to the raw file below.
+    }
+    return fs.readFileSync(inputPath);
+  }
+
   /** Runs the matching Replicate model and returns the output image URL. */
   private async runReplicate(
     tool: Tool,
     inputPath: string,
     _options: ProcessOptions,
   ): Promise<string> {
-    const imageData = fs.readFileSync(inputPath);
+    const imageData = await this.prepareInput(inputPath);
 
     let model: string;
     let input: Record<string, unknown>;
