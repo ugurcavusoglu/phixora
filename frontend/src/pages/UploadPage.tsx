@@ -1,8 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useImageStore } from '../store/imageStore';
 import { useAuthStore } from '../store/authStore';
 import { type Tool } from '../api/image';
+
+const GEM_COSTS: Record<Tool, number> = { 'super-resolution': 5, 'remove-noise': 3, 'remove-background': 4 };
 
 const ACCEPTED = ['image/png', 'image/jpeg', 'image/webp'];
 const MAX_MB = 20;
@@ -35,7 +37,15 @@ export default function UploadPage() {
   const [fileError, setFileError] = useState('');
   const [cleanupLabel, setCleanupLabel] = useState('Balanced');
   const [sliderIntensity, setSliderIntensity] = useState(50);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const navigate = useNavigate();
+  const gems = useAuthStore((s) => s.user?.gems ?? 0);
+
+  useEffect(() => {
+    const seen = localStorage.getItem('phixora-onboarding');
+    if (!seen) setShowOnboarding(true);
+  }, []);
 
   const imagePreview = demoOriginalUrl ?? preview ?? (file ? URL.createObjectURL(file) : null);
 
@@ -175,14 +185,90 @@ export default function UploadPage() {
           </div>
         )}
 
+        {!canApply && (
+          <p className="text-[10px] text-subtle text-center mt-3 px-2">
+            {!file && !isDemo ? '← Upload an image first' : !tool ? '← Select a tool above' : ''}
+          </p>
+        )}
+
         <button
-          onClick={() => navigate('/process')}
+          onClick={() => setShowConfirm(true)}
           disabled={!canApply}
           className="mt-auto py-2.5 rounded-lg bg-accent hover:bg-accent-dk text-white text-sm font-semibold transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
         >
           {applyLabel}
         </button>
       </aside>
+
+      {/* Confirmation dialog */}
+      {showConfirm && tool && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+          <div className="bg-surface rounded-2xl border border-border p-6 w-full max-w-sm mx-4" style={{ boxShadow: '0 8px 40px var(--th-card-glow)' }}>
+            <h3 className="text-text font-bold text-lg mb-2">Confirm Processing</h3>
+            <p className="text-muted text-sm mb-4">
+              This will use <span className="text-gold font-bold">{GEM_COSTS[tool]} ✦</span> credits from your balance.
+            </p>
+            <div className="flex items-center justify-between p-3 rounded-lg bg-bg border border-border mb-5">
+              <span className="text-text text-sm">{TOOLS.find((t) => t.id === tool)?.label}</span>
+              <span className="text-subtle text-xs">Balance: <span className="text-gold font-semibold">{gems} ✦</span></span>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowConfirm(false)}
+                className="flex-1 py-2.5 rounded-lg border border-border text-muted hover:text-text text-sm transition-all duration-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { setShowConfirm(false); navigate('/process'); }}
+                className="flex-1 py-2.5 rounded-lg bg-accent hover:bg-accent-dk text-white text-sm font-semibold transition-all duration-200 shadow-sm"
+              >
+                Confirm & Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Onboarding overlay */}
+      {showOnboarding && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-surface rounded-2xl border border-border p-8 w-full max-w-md mx-4 text-center" style={{ boxShadow: '0 8px 40px var(--th-card-glow)' }}>
+            <div className="text-4xl mb-4">◇</div>
+            <h2 className="text-text font-bold text-xl mb-2">Welcome to phiXora!</h2>
+            <p className="text-muted text-sm mb-6">Here's how to get started in 3 simple steps:</p>
+            <div className="space-y-4 text-left mb-6">
+              <div className="flex gap-3 items-start">
+                <span className="w-7 h-7 rounded-full bg-accent/15 text-accent text-xs font-bold flex items-center justify-center shrink-0">1</span>
+                <div>
+                  <p className="text-text text-sm font-medium">Upload an image</p>
+                  <p className="text-subtle text-xs">Drag & drop or click to browse. PNG, JPG, WEBP up to 20MB.</p>
+                </div>
+              </div>
+              <div className="flex gap-3 items-start">
+                <span className="w-7 h-7 rounded-full bg-accent/15 text-accent text-xs font-bold flex items-center justify-center shrink-0">2</span>
+                <div>
+                  <p className="text-text text-sm font-medium">Choose an AI tool</p>
+                  <p className="text-subtle text-xs">Pick from the sidebar — Super Resolution, Remove Noise, or Remove Background.</p>
+                </div>
+              </div>
+              <div className="flex gap-3 items-start">
+                <span className="w-7 h-7 rounded-full bg-accent/15 text-accent text-xs font-bold flex items-center justify-center shrink-0">3</span>
+                <div>
+                  <p className="text-text text-sm font-medium">Apply & compare</p>
+                  <p className="text-subtle text-xs">Hit Apply, wait for AI processing, then compare before/after with the slider.</p>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={() => { setShowOnboarding(false); localStorage.setItem('phixora-onboarding', '1'); }}
+              className="w-full py-3 rounded-xl bg-accent hover:bg-accent-dk text-white font-semibold transition-all duration-200 shadow-sm"
+            >
+              Got it, let's go!
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main area */}
       <main className="flex-1 flex flex-col items-center justify-center p-8 gap-4">
