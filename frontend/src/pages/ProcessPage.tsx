@@ -115,18 +115,20 @@ export default function ProcessPage() {
                   Buy Gems
                 </button>
               ) : (
-              <button
-                onClick={() => navigate('/tools')}
-                className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent-dk text-white text-sm font-medium transition-all duration-200 shadow-sm"
-              >
-                Try Again
-              </button>
-              <button
-                onClick={() => navigate('/upload')}
-                className="px-6 py-2.5 rounded-lg border border-border bg-surface text-muted hover:text-text hover:border-accent text-sm transition-all duration-200"
-              >
-                Change Image
-              </button>
+                <>
+                  <button
+                    onClick={() => navigate('/tools')}
+                    className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent-dk text-white text-sm font-medium transition-all duration-200 shadow-sm"
+                  >
+                    Try Again
+                  </button>
+                  <button
+                    onClick={() => navigate('/upload')}
+                    className="px-6 py-2.5 rounded-lg border border-border bg-surface text-muted hover:text-text hover:border-accent text-sm transition-all duration-200"
+                  >
+                    Change Image
+                  </button>
+                </>
               )}
             </div>
           </div>
