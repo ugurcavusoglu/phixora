@@ -70,7 +70,7 @@ export class AuthService {
   async getMe(userId: string) {
     return this.prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, name: true, email: true, gems: true, referralCode: true, referralCount: true, createdAt: true },
+      select: { id: true, name: true, email: true, gems: true, tier: true, referralCode: true, referralCount: true, createdAt: true },
     });
   }
 

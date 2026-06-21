@@ -7,4 +7,4 @@ export const login = (email: string, password: string) =>
   api.post<{ access_token: string }>('/auth/login', { email, password });
 
 export const getMe = () =>
-  api.get<{ id: string; name: string; email: string; gems: number; referralCode: string }>('/auth/me');
+  api.get<{ id: string; name: string; email: string; gems: number; tier: string; referralCode: string }>('/auth/me');

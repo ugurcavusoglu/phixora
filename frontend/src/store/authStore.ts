@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { getMe } from '../api/auth';
 
-interface User { id: string; name: string; email: string; gems: number; referralCode: string; }
+interface User { id: string; name: string; email: string; gems: number; tier: string; referralCode: string; }
 
 interface AuthState {
   user: User | null;

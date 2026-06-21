@@ -13,6 +13,7 @@ model User {
   password  String?
   googleId  String?   @unique
   gems          Int      @default(0)
+  tier          String   @default("free")
   referralCode  String   @unique @default(uuid())
   referralCount Int      @default(0)
   createdAt DateTime  @default(now())
