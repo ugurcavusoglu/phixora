@@ -25,7 +25,7 @@ export const processImage = (
   if (options.intensity) form.append('intensity', options.intensity);
   if (options.faceEnhance) form.append('faceEnhance', 'true');
 
-  return api.post<{ historyId: string; outputUrl: string }>('/image/process', form, {
+  return api.post<{ historyId: string; outputUrl: string; remainingGems?: number }>('/image/process', form, {
     headers: { 'Content-Type': 'multipart/form-data' },
   });
 };

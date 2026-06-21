@@ -7,6 +7,7 @@ import { colors } from '../theme/colors';
 import Button from '../components/Button';
 import ScreenHeader from '../components/ScreenHeader';
 import { useImageStore } from '../store/imageStore';
+import { useAuthStore } from '../store/authStore';
 import type { Tool } from '../api/image';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tools'>;
@@ -19,6 +20,7 @@ const TOOLS: { id: Tool; label: string; icon: string; desc: string }[] = [
 
 export default function ToolsScreen({ navigation }: Props) {
   const { uri, tool, scale, isDemo, demoSample, setTool, setScale } = useImageStore();
+  const tier = useAuthStore((s) => s.user?.tier);
 
   useEffect(() => {
     if (!uri && !isDemo) navigation.replace('Upload');
@@ -53,15 +55,20 @@ export default function ToolsScreen({ navigation }: Props) {
           <View style={styles.options}>
             <Text style={styles.optLabel}>SCALE</Text>
             <View style={styles.scaleRow}>
-              {([2, 4] as const).map((s) => (
-                <Pressable
-                  key={s}
-                  onPress={() => setScale(s)}
-                  style={[styles.scaleBtn, scale === s && styles.scaleBtnActive]}
-                >
-                  <Text style={[styles.scaleText, scale === s && styles.scaleTextActive]}>{s}x</Text>
-                </Pressable>
-              ))}
+              {([2, 4] as const).map((s) => {
+                const locked = s === 4 && (!tier || tier === 'free' || tier === 'starter');
+                return (
+                  <Pressable
+                    key={s}
+                    onPress={() => locked ? navigation.navigate('Pricing') : setScale(s)}
+                    style={[styles.scaleBtn, scale === s && !locked && styles.scaleBtnActive, locked && styles.scaleBtnLocked]}
+                  >
+                    <Text style={[styles.scaleText, scale === s && !locked && styles.scaleTextActive]}>
+                      {locked ? `${s}x \u{1F512}` : `${s}x`}
+                    </Text>
+                  </Pressable>
+                );
+              })}
             </View>
           </View>
         )}
@@ -102,4 +109,5 @@ const styles = StyleSheet.create({
   scaleBtnActive: { backgroundColor: colors.violet, borderColor: colors.violet },
   scaleText: { color: colors.muted, fontWeight: '700' },
   scaleTextActive: { color: '#fff' },
+  scaleBtnLocked: { opacity: 0.5, borderColor: colors.muted },
 });

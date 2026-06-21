@@ -19,6 +19,10 @@ import ToolsScreen from './src/screens/ToolsScreen';
 import ProcessScreen from './src/screens/ProcessScreen';
 import ResultScreen from './src/screens/ResultScreen';
 import HistoryScreen from './src/screens/HistoryScreen';
+import PricingScreen from './src/screens/PricingScreen';
+import CheckoutScreen from './src/screens/CheckoutScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+import ContactScreen from './src/screens/ContactScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -55,6 +59,10 @@ export default function App() {
               <Stack.Screen name="Process" component={ProcessScreen} />
               <Stack.Screen name="Result" component={ResultScreen} />
               <Stack.Screen name="History" component={HistoryScreen} />
+              <Stack.Screen name="Pricing" component={PricingScreen} />
+              <Stack.Screen name="Checkout" component={CheckoutScreen} />
+              <Stack.Screen name="Profile" component={ProfileScreen} />
+              <Stack.Screen name="Contact" component={ContactScreen} />
             </>
           ) : isDemo ? (
             <>
@@ -65,6 +73,10 @@ export default function App() {
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="Signup" component={SignupScreen} />
               <Stack.Screen name="Demo" component={DemoScreen} />
+              <Stack.Screen name="Pricing" component={PricingScreen} />
+              <Stack.Screen name="Checkout" component={CheckoutScreen} />
+              <Stack.Screen name="Profile" component={ProfileScreen} />
+              <Stack.Screen name="Contact" component={ContactScreen} />
             </>
           ) : (
             <>
@@ -72,6 +84,10 @@ export default function App() {
               <Stack.Screen name="Login" component={LoginScreen} />
               <Stack.Screen name="Signup" component={SignupScreen} />
               <Stack.Screen name="Demo" component={DemoScreen} />
+              <Stack.Screen name="Pricing" component={PricingScreen} />
+              <Stack.Screen name="Checkout" component={CheckoutScreen} />
+              <Stack.Screen name="Profile" component={ProfileScreen} />
+              <Stack.Screen name="Contact" component={ContactScreen} />
             </>
           )}
         </Stack.Navigator>

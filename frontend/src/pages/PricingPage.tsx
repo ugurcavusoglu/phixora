@@ -149,7 +149,7 @@ export default function PricingPage() {
 
                 {pkg.oldPrice && (
                   <p className="text-center text-xs text-gold font-medium mb-4">
-                    Save {pkg.oldPrice} compared to individual pricing
+                    Save ${(parseFloat(pkg.oldPrice.replace('$', '')) - parseFloat(pkg.price.replace('$', ''))).toFixed(2)} compared to individual pricing
                   </p>
                 )}
 

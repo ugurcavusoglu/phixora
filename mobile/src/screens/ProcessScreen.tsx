@@ -6,6 +6,7 @@ import { RootStackParamList } from '../navigation/types';
 import { colors } from '../theme/colors';
 import Button from '../components/Button';
 import { useImageStore } from '../store/imageStore';
+import { useAuthStore } from '../store/authStore';
 import { processImage } from '../api/image';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Process'>;
@@ -18,8 +19,10 @@ const LABELS: Record<string, string> = {
 
 export default function ProcessScreen({ navigation }: Props) {
   const { uri, tool, scale, intensity, faceEnhance, isDemo, demoSample, setResult, setDemoResult } = useImageStore();
+  const setGems = useAuthStore((s) => s.setGems);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
+  const [creditError, setCreditError] = useState(false);
 
   useEffect(() => {
     if ((!uri && !isDemo) || !tool) { navigation.replace('Upload'); return; }
@@ -63,14 +66,22 @@ export default function ProcessScreen({ navigation }: Props) {
     }
 
     processImage(uri!, tool, { scale, intensity, faceEnhance })
-      .then(({ data }) => finish(data.outputUrl))
+      .then(({ data }) => {
+        if (data.remainingGems !== undefined) setGems(data.remainingGems);
+        finish(data.outputUrl);
+      })
       .catch((err) => {
         if (cancelled) return;
         clearInterval(interval);
-        const msg = err?.response?.status === 429
-          ? 'The AI service is busy. Please wait a moment and try again.'
-          : 'Processing failed. Please try again.';
-        setError(msg);
+        if (err?.response?.status === 403) {
+          setCreditError(true);
+          setError('Not enough credits');
+        } else {
+          const msg = err?.response?.status === 429
+            ? 'The AI service is busy. Please wait a moment and try again.'
+            : 'Processing failed. Please try again.';
+          setError(msg);
+        }
       });
 
     return () => { cancelled = true; clearInterval(interval); };
@@ -82,7 +93,11 @@ export default function ProcessScreen({ navigation }: Props) {
         {error ? (
           <>
             <Text style={styles.error}>{error}</Text>
-            <Button title="Go Back" onPress={() => navigation.replace('Tools')} style={{ marginTop: 16, minWidth: 160 }} />
+            {creditError ? (
+              <Button title="Buy Credits" onPress={() => navigation.navigate('Pricing')} style={{ marginTop: 16, minWidth: 160 }} />
+            ) : (
+              <Button title="Go Back" onPress={() => navigation.replace('Tools')} style={{ marginTop: 16, minWidth: 160 }} />
+            )}
           </>
         ) : (
           <>

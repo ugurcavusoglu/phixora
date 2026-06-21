@@ -8,4 +8,8 @@ export type RootStackParamList = {
   Process: undefined;
   Result: undefined;
   History: undefined;
+  Pricing: undefined;
+  Checkout: { packageId: string };
+  Profile: undefined;
+  Contact: undefined;
 };

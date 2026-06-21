@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import * as SecureStore from 'expo-secure-store';
 import { getMe } from '../api/auth';
 
-interface User { id: string; name: string; email: string; }
+interface User { id: string; name: string; email: string; gems: number; tier: string; referralCode: string; }
 
 interface AuthState {
   user: User | null;
@@ -12,6 +12,8 @@ interface AuthState {
   logout: () => Promise<void>;
   loadToken: () => Promise<void>;
   fetchMe: () => Promise<void>;
+  setGems: (gems: number) => void;
+  setTier: (tier: string) => void;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
@@ -44,4 +46,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       set({ user: null, token: null });
     }
   },
+
+  setGems: (gems) => set((s) => s.user ? { user: { ...s.user, gems } } : {}),
+  setTier: (tier) => set((s) => s.user ? { user: { ...s.user, tier } } : {}),
 }));
