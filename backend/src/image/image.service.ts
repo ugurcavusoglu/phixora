@@ -30,9 +30,9 @@ const MODELS = {
   // SwinIR — sharper textures than Real-ESRGAN for real-world super-resolution.
   upscale:
     'jingyunliang/swinir:660d922d33153019e8c263a3bba265de882e7f4f70396546b6c9c8f9d47a021a',
-  // NAFNet — a real denoiser (not an upscaler hack) for noise removal.
+  // SwinIR denoising — same model as upscale but with denoising task type.
   denoise:
-    'megvii-research/nafnet:018241a6c880319404eaa2714b764313e27e11f950a7ff0a7b5b37b27b74dcf7',
+    'jingyunliang/swinir:660d922d33153019e8c263a3bba265de882e7f4f70396546b6c9c8f9d47a021a',
   // 851-labs background-remover — cleaner edges than the old rembg.
   removeBg:
     '851-labs/background-remover:a029dff38972b5fda4ec5d75d7d1cd25aeff621d2cf4946a41055d7db66b80bc',
@@ -134,7 +134,7 @@ export class ImageService {
       input = { image: dataUri, format: 'png', background_type: 'rgba' };
     } else if (tool === 'remove-noise') {
       model = MODELS.denoise;
-      input = { image: dataUri, task_type: 'Image Denoising' };
+      input = { image: dataUri, noise: 15, task_type: 'Color Image Denoising' };
     } else {
       model = MODELS.upscale;
       input = { image: dataUri, task_type: 'Real-World Image Super-Resolution-Large' };

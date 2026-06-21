@@ -32,12 +32,18 @@ export default function ProcessPage() {
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const startTime = useRef(Date.now());
+  const started = useRef(false);
 
   useEffect(() => {
     if (outputUrl) { navigate('/result', { replace: true }); return; }
     if ((!file && !isDemo) || !tool) { navigate('/upload'); return; }
+    if (started.current) return;
+    started.current = true;
 
     let cancelled = false;
+
+    // Reset ref on cleanup so re-mounting works
+    const resetStarted = () => { started.current = false; };
 
     const interval = setInterval(() => {
       setProgress((p) => {
@@ -63,10 +69,10 @@ export default function ProcessPage() {
       if (!resultUrl) {
         clearInterval(interval);
         setError('Demo result not available.');
-        return () => clearInterval(interval);
+        return () => { clearInterval(interval); resetStarted(); };
       }
       const timer = setTimeout(() => finish(resultUrl, 'demo'), 2500);
-      return () => { clearInterval(interval); clearTimeout(timer); };
+      return () => { clearInterval(interval); clearTimeout(timer); resetStarted(); };
     }
 
     processImage(file!, tool, { scale, intensity, faceEnhance })
@@ -86,7 +92,7 @@ export default function ProcessPage() {
         }
       });
 
-    return () => { cancelled = true; clearInterval(interval); };
+    return () => { cancelled = true; clearInterval(interval); resetStarted(); };
   }, []);
 
   const toolLabel = tool ? TOOL_LABELS[tool] : '';
