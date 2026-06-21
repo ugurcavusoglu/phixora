@@ -75,7 +75,7 @@ export default function TutorialPage() {
             />
 
             <div className="space-y-4">
-              {STEPS.map((s, i) => (
+              {STEPS.map((s) => (
                 <div key={s.step} className="relative flex gap-5 group">
 
                   {/* Figure-ground: numbered circle pops against the line */}

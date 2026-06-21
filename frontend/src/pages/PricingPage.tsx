@@ -92,13 +92,6 @@ export default function PricingPage() {
     return monthly;
   };
 
-  const getUpgradeCost = (pkgId: string, monthly: number) => {
-    const currentMonthly = TIER_MONTHLY[userTier] ?? 0;
-    const diff = monthly - currentMonthly;
-    if (annual) return (diff * 12 * (1 - ANNUAL_DISCOUNT));
-    return diff;
-  };
-
   const handleBuy = (packageId: string) => {
     if (!user) { navigate('/signup'); return; }
     navigate(`/checkout?package=${packageId}&billing=${annual ? 'annual' : 'monthly'}`);

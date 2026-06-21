@@ -12,12 +12,6 @@ const TOOL_LABELS: Record<string, string> = {
   'remove-background': 'Remove Background',
 };
 
-const GEM_COSTS: Record<string, number> = {
-  'super-resolution': 5,
-  'remove-noise': 3,
-  'remove-background': 4,
-};
-
 const TOOL_HINTS: Record<string, string> = {
   'super-resolution': 'Applying Super Resolution. This may take a few seconds.',
   'remove-noise': 'Cleaning up noise — this usually takes a few seconds.',
@@ -26,7 +20,7 @@ const TOOL_HINTS: Record<string, string> = {
 
 export default function ProcessPage() {
   const { file, tool, scale, intensity, faceEnhance, isDemo, demoOriginalUrl, outputUrl, setResult } = useImageStore();
-  const { user, setGems } = useAuthStore();
+  const setGems = useAuthStore((s) => s.setGems);
   const [progress, setProgress] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState('');

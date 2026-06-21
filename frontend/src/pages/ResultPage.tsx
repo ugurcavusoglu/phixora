@@ -55,7 +55,7 @@ export default function ResultPage() {
           afterUrl={outputUrl}
           fitToImage
           showCheckerboard={tool === 'remove-background'}
-          className="w-full max-w-full md:max-w-3xl rounded-2xl" style={{ boxShadow: '0 4px 24px var(--th-card-glow)' }}
+          className="w-full max-w-full md:max-w-3xl rounded-2xl"
         />
 
         {isDemo && (
