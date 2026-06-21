@@ -10,7 +10,7 @@ export default function DemoUploadPage() {
 
   const handleContinue = () => {
     const sample = DEMO_SAMPLES.find((s) => s.id === selectedId);
-    if (sample) { startDemo(sample.original); navigate('/tools'); }
+    if (sample) { startDemo(sample.original); navigate('/upload'); }
   };
 
   return (

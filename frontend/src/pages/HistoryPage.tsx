@@ -28,7 +28,7 @@ export default function HistoryPage() {
     const blob = await resp.blob();
     const file = new File([blob], 'from-history.png', { type: blob.type || 'image/png' });
     setFile(file);
-    navigate('/tools');
+    navigate('/upload');
   };
 
   const handleDelete = async (id: string) => {

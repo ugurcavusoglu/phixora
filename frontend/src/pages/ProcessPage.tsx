@@ -25,7 +25,7 @@ const TOOL_HINTS: Record<string, string> = {
 };
 
 export default function ProcessPage() {
-  const { file, tool, scale, intensity, faceEnhance, isDemo, demoOriginalUrl, setResult } = useImageStore();
+  const { file, tool, scale, intensity, faceEnhance, isDemo, demoOriginalUrl, outputUrl, setResult } = useImageStore();
   const { user, setGems } = useAuthStore();
   const [progress, setProgress] = useState(0);
   const [elapsed, setElapsed] = useState(0);
@@ -34,6 +34,7 @@ export default function ProcessPage() {
   const startTime = useRef(Date.now());
 
   useEffect(() => {
+    if (outputUrl) { navigate('/result', { replace: true }); return; }
     if ((!file && !isDemo) || !tool) { navigate('/upload'); return; }
 
     let cancelled = false;
@@ -49,10 +50,10 @@ export default function ProcessPage() {
     }, 400);
 
     const finish = (outputUrl: string, historyId: string) => {
-      if (cancelled) return;
       clearInterval(interval);
-      setProgress(100);
       setResult(outputUrl, historyId);
+      if (cancelled) return;
+      setProgress(100);
       setTimeout(() => navigate('/result', { replace: true }), 600);
     };
 
@@ -117,7 +118,7 @@ export default function ProcessPage() {
               ) : (
                 <>
                   <button
-                    onClick={() => navigate('/tools')}
+                    onClick={() => navigate('/upload')}
                     className="px-6 py-2.5 rounded-lg bg-accent hover:bg-accent-dk text-white text-sm font-medium transition-all duration-200 shadow-sm"
                   >
                     Try Again
@@ -175,7 +176,7 @@ export default function ProcessPage() {
             )}
 
             <button
-              onClick={() => navigate('/tools')}
+              onClick={() => navigate('/upload')}
               className="text-xs text-subtle hover:text-muted transition-colors duration-200 underline underline-offset-2"
             >
               Cancel

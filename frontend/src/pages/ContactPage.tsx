@@ -68,12 +68,15 @@ export default function ContactPage() {
         <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-10">
 
           {/* Contact form */}
-          <div className="p-8 rounded-2xl border border-border bg-surface" style={{ boxShadow: '0 4px 24px var(--th-card-glow)' }}>
-            <h2 className="text-xl font-bold text-text mb-6">Send a Message</h2>
+          <div className="p-8 rounded-2xl border border-accent/20 bg-surface" style={{ boxShadow: '0 4px 24px var(--th-card-glow)' }}>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-accent/15 flex items-center justify-center text-accent text-lg">✉</div>
+              <h2 className="text-xl font-bold text-text">Send a Message</h2>
+            </div>
 
             {status === 'success' ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="w-16 h-16 rounded-full bg-accent/15 border border-accent/30 flex items-center justify-center text-3xl text-accent mb-4">✓</div>
+                <div className="w-16 h-16 rounded-full flex items-center justify-center text-3xl text-black mb-4" style={{ background: 'linear-gradient(135deg, #34D399, #38BDF8)' }}>✓</div>
                 <h3 className="text-text font-semibold text-lg mb-2">Message Sent!</h3>
                 <p className="text-muted text-sm">We'll get back to you as soon as possible.</p>
                 <button
@@ -86,7 +89,7 @@ export default function ContactPage() {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 {status === 'error' && (
-                  <div className="px-4 py-2 rounded-lg bg-red-50 border border-red-200 text-red-600 text-sm">
+                  <div className="px-4 py-2 rounded-lg text-sm" style={{ backgroundColor: 'var(--th-error-bg)', borderWidth: '1px', borderColor: 'var(--th-error-border)', color: 'var(--th-error-text)' }}>
                     Something went wrong. Please try again.
                   </div>
                 )}
@@ -111,7 +114,8 @@ export default function ContactPage() {
                 <button
                   type="submit"
                   disabled={status === 'loading'}
-                  className="w-full py-2.5 rounded-lg bg-accent hover:bg-accent-dk text-white font-semibold transition-all duration-200 disabled:opacity-50 shadow-sm"
+                  className="w-full py-3 rounded-xl text-white font-semibold transition-all duration-200 disabled:opacity-50 shadow-sm"
+                  style={{ background: 'linear-gradient(135deg, var(--th-accent), var(--th-sky))' }}
                 >
                   {status === 'loading' ? 'Sending…' : 'Send Message'}
                 </button>
@@ -121,26 +125,37 @@ export default function ContactPage() {
 
           {/* FAQ */}
           <div>
-            <h2 className="text-xl font-bold text-text mb-6">Frequently Asked Questions</h2>
-            <div className="space-y-3">
-              {FAQ.map((item, i) => (
-                <div key={i} className="rounded-xl border border-border bg-surface overflow-hidden shadow-sm">
-                  <button
-                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full flex items-center justify-between px-5 py-4 text-left text-text text-sm font-medium hover:text-accent transition-colors duration-200"
-                  >
-                    {item.q}
-                    <span className="text-subtle ml-2 text-lg leading-none">{openFaq === i ? '−' : '+'}</span>
-                  </button>
-                  {openFaq === i && (
-                    <div className="px-5 pb-4 text-sm text-muted leading-relaxed border-t border-border pt-3">
-                      {item.a}
-                    </div>
-                  )}
-                </div>
-              ))}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-xl bg-sky/15 flex items-center justify-center text-sky text-lg">?</div>
+              <h2 className="text-xl font-bold text-text">Frequently Asked Questions</h2>
             </div>
-
+            <div className="space-y-3">
+              {FAQ.map((item, i) => {
+                const isOpen = openFaq === i;
+                return (
+                  <div
+                    key={i}
+                    className={`rounded-xl border overflow-hidden transition-all duration-200 ${
+                      isOpen ? 'border-accent/30 bg-surface' : 'border-border bg-surface hover:border-accent/20'
+                    }`}
+                    style={isOpen ? { boxShadow: '0 2px 12px var(--th-card-glow)' } : undefined}
+                  >
+                    <button
+                      onClick={() => setOpenFaq(isOpen ? null : i)}
+                      className="w-full flex items-center justify-between px-5 py-4 text-left text-sm font-medium transition-colors duration-200"
+                    >
+                      <span className={isOpen ? 'text-accent' : 'text-text'}>{item.q}</span>
+                      <span className={`text-lg leading-none transition-transform duration-200 ${isOpen ? 'text-accent rotate-45' : 'text-subtle'}`}>+</span>
+                    </button>
+                    {isOpen && (
+                      <div className="px-5 pb-4 text-sm text-text/80 leading-relaxed border-t border-border pt-3">
+                        {item.a}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </section>

@@ -6,42 +6,36 @@ const STEPS = [
     title: 'Upload Your Image',
     desc: 'Drag and drop your image onto the upload area, or click to browse. Supports PNG, JPG, JPEG, and WEBP up to 20 MB.',
     icon: '↑',
-    // tag: 'Upload',
   },
   {
     step: '02',
     title: 'Choose an AI Tool',
     desc: 'Select from Super Resolution, Remove Noise, or Remove Background in the sidebar.',
     icon: '✦',
-    // tag: 'Select Tool',
   },
   {
     step: '03',
     title: 'Adjust Settings',
     desc: 'Configure your selected tool. Each tool has controls tuned for its specific task.',
     icon: '⊙',
-    // tag: 'Adjust',
   },
   {
     step: '04',
     title: 'Processing',
-    desc: 'Hit Apply and start the process.',
+    desc: 'Hit Apply and the AI will process your image. A progress bar shows the status — most edits finish in under 30 seconds.',
     icon: '⟳',
-    // tag: 'Process',
   },
   {
     step: '05',
     title: 'Compare Before & After',
     desc: 'Drag the interactive slider to compare your original and enhanced image side by side.',
     icon: '◇',
-    // tag: 'Compare',
   },
   {
     step: '06',
     title: 'Export or Save',
     desc: 'Download in full quality. Every result is also saved to your History automatically.',
     icon: '↓',
-    // tag: 'Export',
   },
 ];
 
@@ -54,10 +48,6 @@ export default function TutorialPage() {
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'var(--th-hero-grad)' }} />
         <div className="absolute top-1/3 right-1/3 w-[400px] h-[300px] bg-sky/8 rounded-full blur-[140px] pointer-events-none" />
         <div className="relative z-10 max-w-3xl">
-          {/* <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full border border-[#E5E7EB] bg-white text-[#4F6BED] text-sm shadow-sm">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#38BDF8] animate-pulse" />
-            Guided Journey · 6 Steps
-          </div> */}
           <h1 className="text-5xl md:text-6xl font-black tracking-tight text-text mb-6 leading-tight">
             How to Use
             <br />
@@ -107,25 +97,14 @@ export default function TutorialPage() {
                         {s.icon}
                       </div>
                       <div>
-                        <div className="flex items-center gap-2">
-                          <span className="text-[12px] font-bold tracking-widest text-accent uppercase">
-                            Step {s.step}
-                          </span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent font-medium">
-                            {s.tag}
-                          </span>
-                        </div>
+                        <span className="text-[12px] font-bold tracking-widest text-accent uppercase">
+                          Step {s.step}
+                        </span>
                         <h3 className="text-text font-semibold leading-tight">{s.title}</h3>
                       </div>
                     </div>
                     <p className="text-muted text-sm leading-relaxed pl-12">{s.desc}</p>
 
-                    {/* Continuity: subtle arrow between steps */}
-                    {/* {i < STEPS.length - 1 && (
-                      <div className="mt-3 pl-12">
-                        <span className="text-[#38BDF8] text-xs font-medium">↓ next step</span>
-                      </div>
-                    )} */}
                   </div>
                 </div>
               ))}

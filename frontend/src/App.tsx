@@ -13,7 +13,7 @@ import FeaturesPage from './pages/FeaturesPage';
 import TutorialPage from './pages/TutorialPage';
 import ContactPage from './pages/ContactPage';
 import UploadPage from './pages/UploadPage';
-import ToolsPage from './pages/ToolsPage';
+import { Navigate } from 'react-router-dom';
 import ProcessPage from './pages/ProcessPage';
 import ResultPage from './pages/ResultPage';
 import HistoryPage from './pages/HistoryPage';
@@ -49,7 +49,7 @@ export default function App() {
           <Route path="/pricing" element={<PricingPage />} />
 
           <Route path="/upload" element={<ProtectedRoute><UploadPage /></ProtectedRoute>} />
-          <Route path="/tools" element={<ProtectedRoute><ToolsPage /></ProtectedRoute>} />
+          <Route path="/tools" element={<Navigate to="/upload" replace />} />
           <Route path="/process" element={<ProtectedRoute><ProcessPage /></ProtectedRoute>} />
           <Route path="/result" element={<ProtectedRoute><ResultPage /></ProtectedRoute>} />
           <Route path="/history" element={<ProtectedRoute><HistoryPage /></ProtectedRoute>} />

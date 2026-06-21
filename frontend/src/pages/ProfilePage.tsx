@@ -50,9 +50,6 @@ export default function ProfilePage() {
             <div className="flex-1">
               <h1 className="text-2xl font-bold text-text">{user?.name}</h1>
               <p className="text-muted text-sm">{user?.email}</p>
-              <p className="text-subtle text-xs mt-1 capitalize">
-                {user?.tier === 'free' ? 'Free Plan' : `${user?.tier} Plan`}
-              </p>
             </div>
             <div className="flex gap-3">
               <button
@@ -68,6 +65,46 @@ export default function ProfilePage() {
                 Log Out
               </button>
             </div>
+          </div>
+
+          {/* Plan details */}
+          <div className="mt-6 pt-6 border-t border-border">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                  user?.tier === 'pro' ? 'bg-accent text-white' :
+                  user?.tier === 'popular' ? 'bg-gold text-black' :
+                  user?.tier === 'starter' ? 'bg-sky/20 text-sky' :
+                  'bg-border text-subtle'
+                }`}>
+                  {user?.tier === 'free' ? 'Free' : user?.tier}
+                </div>
+                <div className="text-sm">
+                  <span className="text-text font-medium">
+                    {user?.tier === 'free' ? 'No active plan' :
+                     user?.tier === 'starter' ? 'Starter Plan — 50 credits/mo' :
+                     user?.tier === 'popular' ? 'Plus Plan — 150 credits/mo' :
+                     'Pro Plan — 500 credits/mo'}
+                  </span>
+                  {user?.billing && user.billing !== 'none' && (
+                    <span className="text-subtle ml-2">· Billed {user.billing}</span>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={() => navigate('/pricing')}
+                className="px-4 py-1.5 rounded-lg text-xs font-medium border border-accent/30 text-accent hover:bg-accent/10 transition-all duration-200"
+              >
+                {user?.tier === 'free' ? 'Get a Plan' : 'Upgrade Plan'}
+              </button>
+            </div>
+            {user?.tier !== 'free' && (
+              <div className="flex gap-4 mt-3 text-xs text-muted">
+                <span>✓ Super Resolution: {user?.tier === 'starter' ? '2x only' : '2x & 4x'}</span>
+                <span>✓ Export: {user?.tier === 'starter' ? 'Standard' : user?.tier === 'popular' ? 'High' : 'Maximum'}</span>
+                <span>✓ History access</span>
+              </div>
+            )}
           </div>
         </div>
 
