@@ -13,19 +13,26 @@ const TIER_RANK = { free: 0, starter: 1, popular: 2, pro: 3 } as Record<string, 
 export class GemsService {
   constructor(private prisma: PrismaService) {}
 
-  async purchase(userId: string, packageId: keyof typeof PACKAGES) {
+  async purchase(userId: string, packageId: keyof typeof PACKAGES, billing: 'monthly' | 'annual' = 'monthly') {
     const pkg = PACKAGES[packageId];
     if (!pkg) throw new BadRequestException('Invalid package');
 
-    const current = await this.prisma.user.findUnique({ where: { id: userId }, select: { tier: true } });
-    const newTier = (TIER_RANK[pkg.tier] ?? 0) > (TIER_RANK[current?.tier ?? 'free'] ?? 0) ? pkg.tier : current?.tier ?? 'free';
+    const current = await this.prisma.user.findUnique({ where: { id: userId }, select: { tier: true, billing: true } });
+    const currentTier = current?.tier ?? 'free';
+    const currentBilling = current?.billing ?? 'none';
+
+    if (currentBilling === 'annual' && billing === 'monthly') {
+      throw new BadRequestException('Cannot switch from annual to monthly billing');
+    }
+
+    const newTier = (TIER_RANK[pkg.tier] ?? 0) > (TIER_RANK[currentTier] ?? 0) ? pkg.tier : currentTier;
 
     const user = await this.prisma.user.update({
       where: { id: userId },
-      data: { gems: { increment: pkg.gems }, tier: newTier },
-      select: { gems: true, tier: true },
+      data: { gems: { increment: pkg.gems }, tier: newTier, billing },
+      select: { gems: true, tier: true, billing: true },
     });
 
-    return { gems: user.gems, added: pkg.gems, package: packageId, tier: user.tier };
+    return { gems: user.gems, added: pkg.gems, package: packageId, tier: user.tier, billing: user.billing };
   }
 }

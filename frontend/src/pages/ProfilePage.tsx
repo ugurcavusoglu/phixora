@@ -1,11 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import { getHistory } from '../api/history';
 
 export default function ProfilePage() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  const [stats, setStats] = useState({ total: 0, sr: 0, noise: 0, bg: 0 });
+
+  useEffect(() => {
+    getHistory().then(({ data }) => {
+      setStats({
+        total: data.length,
+        sr: data.filter((h) => h.tool === 'super-resolution').length,
+        noise: data.filter((h) => h.tool === 'remove-noise').length,
+        bg: data.filter((h) => h.tool === 'remove-background').length,
+      });
+    }).catch(() => {});
+  }, []);
 
   const handleLogout = () => { logout(); navigate('/'); };
 
@@ -17,54 +30,97 @@ export default function ProfilePage() {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const statCards = [
+    { label: 'Total Edits', value: stats.total, icon: '✦' },
+    { label: 'Super Resolution', value: stats.sr, icon: '◈' },
+    { label: 'Noise Removal', value: stats.noise, icon: '✦' },
+    { label: 'Background Removal', value: stats.bg, icon: '⊙' },
+  ];
+
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: 'var(--th-hero-grad)' }}>
-      <div className="w-full max-w-sm">
-        <div className="p-8 rounded-2xl border border-border bg-surface" style={{ boxShadow: '0 4px 24px var(--th-card-glow)' }}>
-          <div className="flex flex-col items-center mb-6">
-            <div className="w-16 h-16 rounded-full bg-accent/15 border-2 border-accent/20 flex items-center justify-center text-2xl text-accent mb-3 font-bold">
+    <div className="min-h-screen px-6 py-24" style={{ background: 'var(--th-hero-grad)' }}>
+      <div className="max-w-4xl mx-auto">
+
+        {/* Profile header */}
+        <div className="p-8 rounded-2xl border border-border bg-surface mb-6" style={{ boxShadow: '0 4px 24px var(--th-card-glow)' }}>
+          <div className="flex items-center gap-6">
+            <div className="w-20 h-20 rounded-full bg-accent/15 border-2 border-accent/20 flex items-center justify-center text-3xl text-accent font-bold shrink-0">
               {user?.name?.[0]?.toUpperCase() ?? '?'}
             </div>
-            <h1 className="text-xl font-bold text-text">{user?.name}</h1>
-            <p className="text-muted text-sm">{user?.email}</p>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold text-text">{user?.name}</h1>
+              <p className="text-muted text-sm">{user?.email}</p>
+              <p className="text-subtle text-xs mt-1 capitalize">
+                {user?.tier === 'free' ? 'Free Plan' : `${user?.tier} Plan`}
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => navigate('/history')}
+                className="px-5 py-2.5 rounded-lg border border-border bg-bg text-text hover:border-accent hover:bg-surface transition-all duration-200 text-sm"
+              >
+                View History
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-5 py-2.5 rounded-lg border border-red-200 bg-surface text-red-500 hover:bg-red-50 transition-all duration-200 text-sm"
+              >
+                Log Out
+              </button>
+            </div>
           </div>
+        </div>
 
-          <div className="p-4 rounded-xl border border-gold/30 bg-gold/10 mb-4 text-center">
-            <p className="text-gold text-2xl font-bold">✦ {user?.gems ?? 0}</p>
-            <p className="text-muted text-xs mt-1">credits available</p>
+        {/* Stats row */}
+        <div className="grid grid-cols-4 gap-4 mb-6">
+          {statCards.map((s) => (
+            <div key={s.label} className="p-5 rounded-xl border border-border bg-surface text-center" style={{ boxShadow: '0 2px 12px var(--th-card-glow)' }}>
+              <p className="text-accent text-xl mb-1">{s.icon}</p>
+              <p className="text-2xl font-black text-text">{s.value}</p>
+              <p className="text-subtle text-xs mt-1">{s.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Credits + Referral row */}
+        <div className="grid md:grid-cols-2 gap-6">
+
+          {/* Credits */}
+          <div className="p-6 rounded-2xl border border-gold/30 bg-gold/10" style={{ boxShadow: '0 4px 24px rgba(251,191,36,0.08)' }}>
+            <p className="text-xs font-bold tracking-widest text-gold uppercase mb-4">Your Credits</p>
+            <div className="flex items-baseline gap-3 mb-2">
+              <span className="text-5xl font-black text-gold">✦ {user?.gems ?? 0}</span>
+            </div>
+            <p className="text-muted text-sm mb-4">credits available to use</p>
             <button
               onClick={() => navigate('/pricing')}
-              className="mt-2 text-xs text-gold hover:underline font-medium"
+              className="w-full py-3 rounded-xl font-semibold text-sm text-black transition-all duration-200"
+              style={{ background: 'linear-gradient(135deg, #FBBF24, #F59E0B)' }}
             >
-              Buy more credits →
+              Buy More Credits →
             </button>
           </div>
 
-          <div className="p-4 rounded-xl border border-border bg-bg mb-4">
-            <p className="text-xs font-bold tracking-widest text-subtle uppercase mb-2">Invite Friends — Earn Credits</p>
-            <p className="text-muted text-xs mb-3">Share your link. Get 10 ✦ per friend who signs up (max 100).</p>
-            <button
-              onClick={copyReferral}
-              className="w-full py-2 rounded-lg border border-border bg-surface text-text hover:border-accent text-xs font-medium transition-all duration-200"
-            >
-              {copied ? 'Copied!' : 'Copy Referral Link'}
-            </button>
+          {/* Referral */}
+          <div className="p-6 rounded-2xl border border-sky/30 relative overflow-hidden" style={{ background: 'linear-gradient(135deg, rgba(52,211,153,0.10) 0%, rgba(56,189,248,0.10) 100%)' }}>
+            <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full blur-3xl opacity-20" style={{ background: 'linear-gradient(135deg, #34D399, #38BDF8)' }} />
+            <div className="relative">
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-2xl">🎁</span>
+                <p className="text-xs font-bold tracking-widest text-sky uppercase">Invite Friends — Earn Credits</p>
+              </div>
+              <p className="text-text text-lg font-bold mb-1">Get <span className="text-gold">10 ✦</span> per referral</p>
+              <p className="text-muted text-sm mb-5">Share your link. Every friend who signs up earns you credits. Up to <span className="text-gold font-semibold">100 ✦</span> total.</p>
+              <button
+                onClick={copyReferral}
+                className="w-full py-3 rounded-xl font-semibold text-sm transition-all duration-200 text-black"
+                style={{ background: copied ? '#34D399' : 'linear-gradient(135deg, #34D399, #38BDF8)' }}
+              >
+                {copied ? '✓ Link Copied!' : '📋 Copy Referral Link'}
+              </button>
+            </div>
           </div>
 
-          <div className="space-y-3">
-            <button
-              onClick={() => navigate('/history')}
-              className="w-full py-2.5 rounded-lg border border-border bg-bg text-text hover:border-accent hover:bg-surface transition-all duration-200 text-sm"
-            >
-              View History
-            </button>
-            <button
-              onClick={handleLogout}
-              className="w-full py-2.5 rounded-lg border border-red-200 bg-surface text-red-500 hover:bg-red-50 transition-all duration-200 text-sm"
-            >
-              Log Out
-            </button>
-          </div>
         </div>
       </div>
     </div>

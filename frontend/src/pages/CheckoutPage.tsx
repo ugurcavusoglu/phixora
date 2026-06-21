@@ -3,16 +3,23 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
 import { purchaseGems } from '../api/gems';
 
-const PACKAGES: Record<string, { name: string; credits: number; price: string }> = {
-  starter: { name: 'Starter', credits: 50, price: '$1.99' },
-  popular: { name: 'Popular', credits: 150, price: '$4.99' },
-  pro: { name: 'Pro', credits: 500, price: '$9.99' },
+const PACKAGES: Record<string, { name: string; credits: number; monthly: number }> = {
+  starter: { name: 'Starter', credits: 50, monthly: 1.99 },
+  popular: { name: 'Popular', credits: 150, monthly: 4.99 },
+  pro: { name: 'Pro', credits: 500, monthly: 9.99 },
 };
+
+const ANNUAL_DISCOUNT = 0.30;
 
 export default function CheckoutPage() {
   const [searchParams] = useSearchParams();
   const packageId = searchParams.get('package') || 'starter';
+  const billing = (searchParams.get('billing') || 'monthly') as 'monthly' | 'annual';
   const pkg = PACKAGES[packageId] || PACKAGES.starter;
+  const isAnnual = billing === 'annual';
+  const displayPrice = isAnnual
+    ? `$${(pkg.monthly * 12 * (1 - ANNUAL_DISCOUNT)).toFixed(2)}/yr`
+    : `$${pkg.monthly.toFixed(2)}/mo`;
   const navigate = useNavigate();
   const { setGems } = useAuthStore();
 
@@ -38,7 +45,7 @@ export default function CheckoutPage() {
     setLoading(true);
     setError('');
     try {
-      const { data } = await purchaseGems(packageId as any);
+      const { data } = await purchaseGems(packageId as any, billing);
       setGems(data.gems);
       setSuccess(true);
     } catch {
@@ -57,8 +64,9 @@ export default function CheckoutPage() {
         <div className="w-full max-w-sm p-8 rounded-2xl border border-gold/30 bg-surface text-center" style={{ boxShadow: '0 8px 32px rgba(251,191,36,0.15)' }}>
           <div className="w-16 h-16 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center text-3xl mx-auto mb-4">✦</div>
           <h2 className="text-2xl font-bold text-text mb-2">Payment Successful!</h2>
-          <p className="text-muted text-sm mb-1">{pkg.credits} credits added to your account.</p>
-          <p className="text-gold font-bold text-lg mb-6">{pkg.price}</p>
+          <p className="text-muted text-sm mb-1">{pkg.credits} credits{isAnnual ? '/mo' : ''} added to your account.</p>
+          {isAnnual && <p className="text-sky text-xs mb-1">Credits refresh every month for 12 months</p>}
+          <p className="text-gold font-bold text-lg mb-6">{displayPrice}</p>
           <button
             onClick={() => navigate('/upload')}
             className="w-full py-2.5 rounded-lg bg-accent hover:bg-accent-dk text-white font-semibold transition-all duration-200 shadow-sm"
@@ -88,7 +96,7 @@ export default function CheckoutPage() {
               <p className="text-text font-semibold">{pkg.name} Package</p>
               <p className="text-gold text-sm font-medium">{pkg.credits} credits</p>
             </div>
-            <span className="text-2xl font-black text-text">{pkg.price}</span>
+            <span className="text-2xl font-black text-text">{displayPrice}</span>
           </div>
 
           {error && (
@@ -122,7 +130,7 @@ export default function CheckoutPage() {
               disabled={!isValid || loading}
               className="w-full py-3 rounded-xl bg-gold hover:bg-[var(--th-gold-dk)] text-black font-semibold transition-all duration-200 disabled:opacity-50 shadow-sm"
             >
-              {loading ? 'Processing…' : `Pay ${pkg.price}`}
+              {loading ? 'Processing…' : `Pay ${displayPrice}`}
             </button>
           </form>
 

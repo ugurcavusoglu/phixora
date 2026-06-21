@@ -10,6 +10,6 @@ export class GemsController {
 
   @Post('purchase')
   purchase(@Req() req: any, @Body() dto: PurchaseDto) {
-    return this.gems.purchase(req.user.id, dto.packageId);
+    return this.gems.purchase(req.user.id, dto.packageId, dto.billing);
   }
 }

@@ -14,6 +14,7 @@ model User {
   googleId  String?   @unique
   gems          Int      @default(0)
   tier          String   @default("free")
+  billing       String   @default("none")
   referralCode  String   @unique @default(uuid())
   referralCount Int      @default(0)
   createdAt DateTime  @default(now())

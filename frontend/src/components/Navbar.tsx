@@ -82,7 +82,7 @@ export default function Navbar() {
 
       {/* Centre links */}
       <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex items-center gap-8">
-        {user && isAppPage ? appLinks : publicLinks}
+        {publicLinks}
       </div>
 
       {/* Right actions */}
