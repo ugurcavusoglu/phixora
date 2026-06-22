@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
@@ -11,6 +11,12 @@ import { processImage } from '../api/image';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Process'>;
 
+const CREDIT_COSTS: Record<string, number> = {
+  'super-resolution': 5,
+  'remove-noise': 3,
+  'remove-background': 4,
+};
+
 const LABELS: Record<string, string> = {
   'super-resolution': 'Super Resolution',
   'remove-noise': 'Remove Noise',
@@ -20,12 +26,28 @@ const LABELS: Record<string, string> = {
 export default function ProcessScreen({ navigation }: Props) {
   const { uri, tool, scale, intensity, faceEnhance, isDemo, demoSample, setResult, setDemoResult } = useImageStore();
   const setGems = useAuthStore((s) => s.setGems);
+  const userGems = useAuthStore((s) => s.user?.gems ?? 0);
+  const [confirmed, setConfirmed] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState('');
   const [creditError, setCreditError] = useState(false);
 
   useEffect(() => {
     if ((!uri && !isDemo) || !tool) { navigation.replace('Upload'); return; }
+    if (!confirmed) {
+      const cost = tool ? CREDIT_COSTS[tool] ?? 0 : 0;
+      const toolLabel = tool ? LABELS[tool] : '';
+      Alert.alert(
+        'Confirm Processing',
+        `${toolLabel} will use ${cost} credits.\nYour balance: ${userGems} credits.`,
+        [
+          { text: 'Cancel', style: 'cancel', onPress: () => navigation.goBack() },
+          { text: 'Confirm & Apply', onPress: () => setConfirmed(true) },
+        ],
+        { cancelable: false },
+      );
+      return;
+    }
     let cancelled = false;
 
     const interval = setInterval(() => {
@@ -85,7 +107,7 @@ export default function ProcessScreen({ navigation }: Props) {
       });
 
     return () => { cancelled = true; clearInterval(interval); };
-  }, []);
+  }, [confirmed]);
 
   return (
     <SafeAreaView style={styles.safe}>

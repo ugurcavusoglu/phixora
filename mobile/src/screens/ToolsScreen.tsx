@@ -12,10 +12,10 @@ import type { Tool } from '../api/image';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Tools'>;
 
-const TOOLS: { id: Tool; label: string; icon: string; desc: string }[] = [
-  { id: 'super-resolution', label: 'Super Resolution', icon: '◈', desc: 'Upscale up to 4x' },
-  { id: 'remove-noise', label: 'Remove Noise', icon: '✦', desc: 'Clean grain & artifacts' },
-  { id: 'remove-background', label: 'Remove Background', icon: '⊙', desc: 'Auto background removal' },
+const TOOLS: { id: Tool; label: string; icon: string; desc: string; info: string }[] = [
+  { id: 'super-resolution', label: 'Super Resolution', icon: '◈', desc: 'Upscale up to 4x', info: 'Increases image resolution using AI. Great for enlarging small or low-quality photos. Costs 5 credits.' },
+  { id: 'remove-noise', label: 'Remove Noise', icon: '✦', desc: 'Clean grain & artifacts', info: 'Removes grain, sensor noise, and compression artifacts. Ideal for old or low-light images. Costs 3 credits.' },
+  { id: 'remove-background', label: 'Remove Background', icon: '⊙', desc: 'Auto background removal', info: 'Automatically removes the background, exporting transparent PNG. Perfect for product photos. Costs 4 credits.' },
 ];
 
 export default function ToolsScreen({ navigation }: Props) {
@@ -47,6 +47,7 @@ export default function ToolsScreen({ navigation }: Props) {
             <View style={{ flex: 1 }}>
               <Text style={[styles.toolLabel, tool === t.id && styles.toolLabelActive]}>{t.label}</Text>
               <Text style={styles.toolDesc}>{t.desc}</Text>
+              {tool === t.id && <Text style={styles.toolInfo}>{t.info}</Text>}
             </View>
           </Pressable>
         ))}
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
   toolLabel: { color: colors.text, fontSize: 15, fontWeight: '600' },
   toolLabelActive: { color: colors.violetHi },
   toolDesc: { color: colors.muted, fontSize: 12, marginTop: 2 },
+  toolInfo: { color: colors.subtle, fontSize: 12, marginTop: 6, lineHeight: 18 },
   options: { marginTop: 16 },
   optLabel: { color: colors.muted, fontSize: 12, fontWeight: '700', letterSpacing: 1, marginBottom: 10 },
   scaleRow: { flexDirection: 'row', gap: 10 },

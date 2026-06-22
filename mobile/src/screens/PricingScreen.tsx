@@ -1,4 +1,5 @@
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable, Switch } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
@@ -9,10 +10,12 @@ import { useAuthStore } from '../store/authStore';
 type Props = NativeStackScreenProps<RootStackParamList, 'Pricing'>;
 
 const PACKAGES = [
-  { id: 'starter', name: 'Starter', price: '$1.99', credits: 50, highlighted: false },
-  { id: 'popular', name: 'Popular', price: '$4.99', credits: 150, highlighted: true },
-  { id: 'pro', name: 'Pro', price: '$9.99', credits: 500, highlighted: false },
+  { id: 'starter', name: 'Starter', monthly: 1.99, credits: 50, highlighted: false },
+  { id: 'popular', name: 'Popular', monthly: 4.99, credits: 150, highlighted: true },
+  { id: 'pro', name: 'Pro', monthly: 9.99, credits: 500, highlighted: false },
 ] as const;
+
+const TIER_ORDER = ['free', 'starter', 'popular', 'pro'] as const;
 
 const TOOL_COSTS = [
   { name: 'Super Resolution', cost: 5 },
@@ -22,6 +25,18 @@ const TOOL_COSTS = [
 
 export default function PricingScreen({ navigation }: Props) {
   const user = useAuthStore((s) => s.user);
+  const [annual, setAnnual] = useState(false);
+
+  const userTierIndex = TIER_ORDER.indexOf((user?.tier as any) ?? 'free');
+
+  const getButtonLabel = (pkgId: string) => {
+    if (!user) return 'Sign Up';
+    const pkgIndex = TIER_ORDER.indexOf(pkgId as any);
+    if (pkgIndex <= userTierIndex) return pkgIndex === userTierIndex ? 'Current Plan' : 'Included';
+    const pkg = PACKAGES.find((p) => p.id === pkgId)!;
+    const price = annual ? (pkg.monthly * 12 * 0.7).toFixed(2) : pkg.monthly.toFixed(2);
+    return `Upgrade — $${price}`;
+  };
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -33,6 +48,18 @@ export default function PricingScreen({ navigation }: Props) {
         <Text style={styles.title}>Choose Your Plan</Text>
         <Text style={styles.subtitle}>Get credits to power your AI edits</Text>
 
+        <View style={styles.toggleRow}>
+          <Text style={[styles.toggleLabel, !annual && styles.toggleLabelActive]}>Monthly</Text>
+          <Switch
+            value={annual}
+            onValueChange={setAnnual}
+            trackColor={{ false: colors.border, true: colors.violet }}
+            thumbColor="#fff"
+          />
+          <Text style={[styles.toggleLabel, annual && styles.toggleLabelActive]}>Annual</Text>
+          {annual && <View style={styles.discountBadge}><Text style={styles.discountText}>30% OFF</Text></View>}
+        </View>
+
         {user && (
           <View style={styles.balanceRow}>
             <Text style={styles.balanceLabel}>Current Balance</Text>
@@ -40,21 +67,35 @@ export default function PricingScreen({ navigation }: Props) {
           </View>
         )}
 
-        {PACKAGES.map((pkg) => (
-          <View key={pkg.id} style={[styles.card, pkg.highlighted && styles.cardHighlighted]}>
-            {pkg.highlighted && <Text style={styles.badge}>BEST VALUE</Text>}
-            <Text style={styles.pkgName}>{pkg.name}</Text>
-            <Text style={styles.pkgCredits}>
-              {pkg.credits} <Text style={{ color: colors.gold }}>✦</Text> credits
-            </Text>
-            <Text style={styles.pkgPrice}>{pkg.price}</Text>
-            <Button
-              title={user ? 'Buy Now' : 'Sign Up'}
-              onPress={() => user ? navigation.navigate('Checkout', { packageId: pkg.id }) : navigation.navigate('Signup')}
-              style={{ marginTop: 12 }}
-            />
-          </View>
-        ))}
+        {PACKAGES.map((pkg) => {
+          const price = annual ? pkg.monthly * 12 * 0.7 : pkg.monthly;
+          const label = getButtonLabel(pkg.id);
+          const isCurrent = label === 'Current Plan' || label === 'Included';
+          return (
+            <View key={pkg.id} style={[styles.card, pkg.highlighted && styles.cardHighlighted]}>
+              {pkg.highlighted && <Text style={styles.badge}>BEST VALUE</Text>}
+              <Text style={styles.pkgName}>{pkg.name}</Text>
+              <Text style={styles.pkgCredits}>
+                {pkg.credits} <Text style={{ color: colors.gold }}>✦</Text> credits{annual ? '/yr' : '/mo'}
+              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'baseline', gap: 8 }}>
+                <Text style={styles.pkgPrice}>${price.toFixed(2)}</Text>
+                {annual && (
+                  <Text style={styles.oldPrice}>${(pkg.monthly * 12).toFixed(2)}</Text>
+                )}
+              </View>
+              <Button
+                title={label}
+                onPress={() => {
+                  if (isCurrent) return;
+                  user ? navigation.navigate('Checkout', { packageId: pkg.id }) : navigation.navigate('Signup');
+                }}
+                disabled={isCurrent}
+                style={{ marginTop: 12 }}
+              />
+            </View>
+          );
+        })}
 
         <Text style={styles.sectionTitle}>Tool Costs</Text>
         {TOOL_COSTS.map((t) => (
@@ -93,6 +134,12 @@ const styles = StyleSheet.create({
   pkgName: { color: colors.text, fontSize: 18, fontWeight: '700' },
   pkgCredits: { color: colors.muted, fontSize: 14, marginTop: 4 },
   pkgPrice: { color: colors.text, fontSize: 28, fontWeight: '800', marginTop: 8 },
+  oldPrice: { color: colors.muted, fontSize: 16, textDecorationLine: 'line-through' },
+  toggleRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 20 },
+  toggleLabel: { color: colors.muted, fontSize: 14, fontWeight: '600' },
+  toggleLabelActive: { color: colors.text },
+  discountBadge: { backgroundColor: colors.neon, borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 },
+  discountText: { color: colors.bg, fontSize: 11, fontWeight: '800' },
   sectionTitle: {
     color: colors.muted, fontSize: 12, fontWeight: '700', letterSpacing: 1,
     textTransform: 'uppercase', marginTop: 24, marginBottom: 12,

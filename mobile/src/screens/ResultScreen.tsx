@@ -15,7 +15,8 @@ import { useImageStore } from '../store/imageStore';
 type Props = NativeStackScreenProps<RootStackParamList, 'Result'>;
 
 export default function ResultScreen({ navigation }: Props) {
-  const { beforeUrl, outputUrl, tool, reset } = useImageStore();
+  const { beforeUrl: storedBefore, outputUrl, tool, uri, reset } = useImageStore();
+  const beforeUrl = storedBefore || uri;
   const [saving, setSaving] = useState(false);
   const [sharing, setSharing] = useState(false);
 

@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
+import { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, Pressable, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
 import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
+import * as SecureStore from 'expo-secure-store';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import { colors } from '../theme/colors';
@@ -15,9 +16,27 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Upload'>;
 // Keep the longest edge under this so AI models don't run out of GPU memory.
 const MAX_EDGE = 1600;
 
+const ONBOARDING_STEPS = [
+  { icon: '↑', title: 'Upload', desc: 'Pick a photo from your gallery to get started.' },
+  { icon: '◈', title: 'Choose Tool', desc: 'Select an AI tool: upscale, denoise, or remove background.' },
+  { icon: '⇌', title: 'Compare Results', desc: 'Slide to compare before & after, then save or share.' },
+];
+
 export default function UploadScreen({ navigation }: Props) {
   const { uri, setImage } = useImageStore();
   const [preparing, setPreparing] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+
+  useEffect(() => {
+    SecureStore.getItemAsync('phixora-onboarding').then((val) => {
+      if (!val) setShowOnboarding(true);
+    });
+  }, []);
+
+  const dismissOnboarding = async () => {
+    await SecureStore.setItemAsync('phixora-onboarding', '1');
+    setShowOnboarding(false);
+  };
 
   const pick = async () => {
     const res = await ImagePicker.launchImageLibraryAsync({
@@ -77,6 +96,26 @@ export default function UploadScreen({ navigation }: Props) {
           style={{ marginTop: 16 }}
         />
       </View>
+
+      <Modal visible={showOnboarding} transparent animationType="fade">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Welcome to Phixora</Text>
+            {ONBOARDING_STEPS.map((step, i) => (
+              <View key={i} style={styles.stepRow}>
+                <View style={styles.stepCircle}>
+                  <Text style={styles.stepIcon}>{step.icon}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.stepTitle}>{step.title}</Text>
+                  <Text style={styles.stepDesc}>{step.desc}</Text>
+                </View>
+              </View>
+            ))}
+            <Button title="Got it!" onPress={dismissOnboarding} style={{ marginTop: 20 }} />
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -96,4 +135,12 @@ const styles = StyleSheet.create({
   icon: { fontSize: 26, color: colors.violetHi },
   dropTitle: { color: colors.text, fontSize: 16, fontWeight: '600' },
   dropSub: { color: colors.muted, fontSize: 12, marginTop: 6 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', alignItems: 'center', justifyContent: 'center', padding: 24 },
+  modalCard: { backgroundColor: colors.surface, borderRadius: 20, padding: 24, width: '100%', borderWidth: 1, borderColor: colors.border },
+  modalTitle: { color: colors.text, fontSize: 22, fontWeight: '800', marginBottom: 20, textAlign: 'center' },
+  stepRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 16 },
+  stepCircle: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(124,58,237,0.2)', alignItems: 'center', justifyContent: 'center' },
+  stepIcon: { fontSize: 20, color: colors.violetHi },
+  stepTitle: { color: colors.text, fontSize: 15, fontWeight: '600' },
+  stepDesc: { color: colors.muted, fontSize: 13, marginTop: 2 },
 });

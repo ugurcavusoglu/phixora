@@ -20,7 +20,7 @@ const PKG_INFO: Record<string, { name: string; price: string; credits: number }>
 export default function CheckoutScreen({ navigation, route }: Props) {
   const { packageId } = route.params;
   const pkg = PKG_INFO[packageId] || PKG_INFO.starter;
-  const { setGems, setTier } = useAuthStore();
+  const { setGems, setTier, fetchMe } = useAuthStore();
 
   const [cardName, setCardName] = useState('');
   const [cardNumber, setCardNumber] = useState('');
@@ -30,11 +30,25 @@ export default function CheckoutScreen({ navigation, route }: Props) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const [expiryError, setExpiryError] = useState('');
+
   const validate = (): string | null => {
+    setExpiryError('');
     if (!cardName.trim()) return 'Name on card is required.';
     if (!/^\d{16}$/.test(cardNumber.replace(/\s/g, ''))) return 'Card number must be 16 digits.';
-    if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry)) return 'Expiry must be MM/YY format.';
-    if (!/^\d{3,}$/.test(cvv)) return 'CVV must be at least 3 digits.';
+    if (!/^(0[1-9]|1[0-2])\/\d{2}$/.test(expiry)) {
+      const monthMatch = expiry.match(/^(\d{2})\//);
+      if (monthMatch) {
+        const m = parseInt(monthMatch[1], 10);
+        if (m < 1 || m > 12) { setExpiryError('Invalid month (01-12)'); return 'Invalid expiry.'; }
+      }
+      return 'Expiry must be MM/YY format.';
+    }
+    const [mm, yy] = expiry.split('/').map(Number);
+    const now = new Date();
+    const expiryDate = new Date(2000 + yy, mm);
+    if (expiryDate <= now) { setExpiryError('Card has expired'); return 'Card has expired.'; }
+    if (!/^\d{3}$/.test(cvv)) return 'CVV must be exactly 3 digits.';
     return null;
   };
 
@@ -47,6 +61,7 @@ export default function CheckoutScreen({ navigation, route }: Props) {
       const { data } = await purchaseGems(packageId as PackageId);
       setGems(data.gems);
       setTier(data.tier);
+      await fetchMe();
       setSuccess(true);
     } catch (e: any) {
       setError(e?.response?.data?.message || 'Payment failed. Please try again.');
@@ -89,9 +104,10 @@ export default function CheckoutScreen({ navigation, route }: Props) {
           <View style={styles.row}>
             <View style={{ flex: 1 }}>
               <Input label="Expiry" value={expiry} onChangeText={setExpiry} placeholder="MM/YY" maxLength={5} />
+              {expiryError ? <Text style={styles.expiryError}>{expiryError}</Text> : null}
             </View>
             <View style={{ flex: 1 }}>
-              <Input label="CVV" value={cvv} onChangeText={setCvv} placeholder="123" keyboardType="number-pad" maxLength={4} secureTextEntry />
+              <Input label="CVV" value={cvv} onChangeText={setCvv} placeholder="123" keyboardType="number-pad" maxLength={3} secureTextEntry />
             </View>
           </View>
 
@@ -120,6 +136,7 @@ const styles = StyleSheet.create({
   summaryLabel: { color: colors.muted, fontSize: 14 },
   summaryPrice: { color: colors.text, fontSize: 22, fontWeight: '800' },
   error: { color: colors.danger, marginBottom: 12 },
+  expiryError: { color: colors.danger, fontSize: 12, marginTop: 4 },
   row: { flexDirection: 'row', gap: 12 },
   successContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   checkmark: { fontSize: 64, color: colors.neon, marginBottom: 16 },

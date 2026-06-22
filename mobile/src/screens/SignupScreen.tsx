@@ -20,7 +20,15 @@ export default function SignupScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(false);
   const { setToken, fetchMe } = useAuthStore();
 
+  const pwRules = [
+    { label: 'At least 6 characters', met: password.length >= 6 },
+    { label: 'One uppercase letter', met: /[A-Z]/.test(password) },
+    { label: 'One number', met: /\d/.test(password) },
+  ];
+  const metCount = pwRules.filter((r) => r.met).length;
+
   const handleSignup = async () => {
+    if (metCount < 3) { setError('Password does not meet all requirements.'); return; }
     if (password !== confirm) { setError('Passwords do not match.'); return; }
     setError('');
     setLoading(true);
@@ -47,6 +55,28 @@ export default function SignupScreen({ navigation }: Props) {
           <Input label="Name" value={name} onChangeText={setName} placeholder="Your full name" />
           <Input label="Email" value={email} onChangeText={setEmail} placeholder="you@example.com" keyboardType="email-address" />
           <Input label="Password" value={password} onChangeText={setPassword} placeholder="••••••" secureTextEntry />
+
+          {password.length > 0 && (
+            <View style={styles.strengthWrap}>
+              <View style={styles.barRow}>
+                {[0, 1, 2].map((i) => (
+                  <View
+                    key={i}
+                    style={[
+                      styles.bar,
+                      { backgroundColor: i < metCount ? (metCount === 1 ? colors.danger : metCount === 2 ? colors.gold : '#34D399') : colors.border },
+                    ]}
+                  />
+                ))}
+              </View>
+              {pwRules.map((r, i) => (
+                <Text key={i} style={[styles.ruleText, { color: r.met ? '#34D399' : colors.muted }]}>
+                  {r.met ? '✓' : '✗'} {r.label}
+                </Text>
+              ))}
+            </View>
+          )}
+
           <Input label="Confirm Password" value={confirm} onChangeText={setConfirm} placeholder="••••••" secureTextEntry />
 
           <Button title="Create Account" onPress={handleSignup} loading={loading} style={{ marginTop: 8 }} />
@@ -72,4 +102,8 @@ const styles = StyleSheet.create({
   linkWrap: { marginTop: 20, alignItems: 'center' },
   link: { color: colors.muted, fontSize: 14 },
   linkAccent: { color: colors.violetHi, fontWeight: '600' },
+  strengthWrap: { marginBottom: 8 },
+  barRow: { flexDirection: 'row', gap: 6, marginBottom: 8 },
+  bar: { flex: 1, height: 4, borderRadius: 2 },
+  ruleText: { fontSize: 12, marginBottom: 2 },
 });
