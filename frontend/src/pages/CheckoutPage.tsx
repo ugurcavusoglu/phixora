@@ -34,14 +34,17 @@ export default function CheckoutPage() {
     return digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
   };
 
-  const expiryValid = (() => {
-    if (card.expiry.length !== 5) return false;
+  const expiryError = (() => {
+    if (card.expiry.length < 5) return '';
     const [mm, yy] = card.expiry.split('/').map(Number);
-    if (!mm || !yy || mm < 1 || mm > 12) return false;
+    if (!mm || mm < 1 || mm > 12) return 'Invalid month (01–12)';
+    if (!yy) return 'Invalid year';
     const now = new Date();
     const expDate = new Date(2000 + yy, mm);
-    return expDate > now;
+    if (expDate <= now) return 'Card has expired';
+    return '';
   })();
+  const expiryValid = card.expiry.length === 5 && !expiryError;
 
   const isValid = card.number.replace(/\s/g, '').length === 16 &&
     expiryValid &&
@@ -127,7 +130,14 @@ export default function CheckoutPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-muted mb-1">Expiry *</label>
-                <input value={card.expiry} onChange={(e) => setCard({ ...card, expiry: formatExpiry(e.target.value) })} placeholder="MM/YY" required className={inputClass} />
+                <input
+                  value={card.expiry}
+                  onChange={(e) => setCard({ ...card, expiry: formatExpiry(e.target.value) })}
+                  placeholder="MM/YY"
+                  required
+                  className={`${inputClass} ${expiryError ? 'border-red-400 focus:border-red-400 focus:ring-red-400/10' : ''}`}
+                />
+                {expiryError && <p className="text-xs text-red-400 mt-1">{expiryError}</p>}
               </div>
               <div>
                 <label className="block text-sm font-medium text-muted mb-1">CVV *</label>
